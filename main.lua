@@ -4,6 +4,7 @@ _G.Point2D = require "rendering.Point2D"
 _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.utf8 = require "libs.utf8_simple"
+_G.UI = require "ui.UI"
 
 _G.SCREEN_WIDTH = nil
 _G.SCREEN_HEIGHT = nil
@@ -15,8 +16,11 @@ ASPECT_RATIO = SCREEN_WIDTH / SCREEN_HEIGHT
 local a = require "rendering.Adapter"
 local r = require "rendering.Renderer"
 
+
+local ui = UI(400, 700, 750, 50)
+
 function love.load()
-    --[[local vertices = {
+    local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
         Vertex(  0.25,  0.25,  0.25 ), --2
         Vertex(  0.25, -0.25,  0.25 ), --3
@@ -37,15 +41,17 @@ function love.load()
         {4, 8},
     }
 
-    r:setObj(vertices, faces)]]
+    r:setObj(vertices, faces)
 
-    a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
+    --a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
 end
 
 function love.update(dt)
+    ui:update(dt)
     r:update(dt)
 end
 
 function love.draw()
     r:draw()
+    ui:draw()
 end
