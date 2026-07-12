@@ -4,11 +4,14 @@ local Container = Class:create()
 function Container:new(w, h, node)
     self.w = w
     self.h = h
-    self.node = node
 
-    node.container_w = w
-    node.container_h = h
-    node.container = self
+    self.node = node
+    self.node_x = 0
+    self.node_y = 0
+
+    self.margin = 0
+
+    node:addContainer(self)
 
     --la posición del contenedor dentro del padre
     self.x = 0
@@ -38,17 +41,36 @@ function Container:drawToCanvas()
         self.node:drawToCanvas()
         love.graphics.draw(self.node.canvas, self.node_x, self.node_y)
 
+        --dibuja los hijos recursivamente
+        if self.node.manageChildren then
+            self:drawChildren()
+        end
+
         --dibuja los bordes del contenedor
-        self:drawDebug()
+        if self.node.ui.debug then
+            self:drawDebug()
+        end
 
     love.graphics.setCanvas(current)
+end
+
+function Container:drawChildren()
+    for _, container in ipairs(self.node.children) do
+
+        if container.node.ignoredByLayout == false and container.node.visible then
+            container:drawToCanvas()
+            --love.graphics.draw(container.canvas, container.x, container.y)
+            love.graphics.draw(container.canvas, container.x + container.margin, container.y + container.margin)
+        end
+
+    end
 end
 
 function Container:drawDebug()
     love.graphics.push("all")
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.setLineWidth(6)
+    love.graphics.setLineWidth(4)
     love.graphics.rectangle("line", 0, 0, self.w, self.h)
 
     love.graphics.pop()
@@ -61,10 +83,23 @@ function Container:setPos(x, y)
     self.y = y
 end
 
+function Container:GetPos()
+    return self.x, self.y
+end
+
 function Container:setDimensions(w, h)
-    self.w = w
-    self.h = h
+    if w <= 0 then w = 1 end
+    if h <= 0 then h = 1 end
+
+    self.w = math.floor(w)
+    self.h = math.floor(h)
+
     self.canvas = love.graphics.newCanvas(w, h)
+end
+
+function Container:getDimensions()
+    return self.w - self.margin * 2 ,
+        self.h - self.margin * 2
 end
 
 return Container

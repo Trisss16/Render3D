@@ -3,7 +3,7 @@ local Container = require "ui.Container"
 
 local Node = Class:create()
 
-function Node:new(w, h)
+function Node:new()
     --las dimensiones reales, en pixeles
     self.w = 1
     self.h = 1
@@ -11,6 +11,7 @@ function Node:new(w, h)
     --dimensiones relativas, de 0 a 1, siendo 1 el tamaño de la ui.
     self.relative_w = 0.1
     self.relative_h = 0.05
+    self.ignoreRelative = false
 
     --el tamaño de la ui se asigna hasta que se agregue un nodo padre
     self.ui_w = 0
@@ -21,15 +22,27 @@ function Node:new(w, h)
     self.container_h = 0
 
     self.isFocused = false
-    self.cursor = love.mouse.getSystemCursor("hand")
+    self.focusable = true
+    self.handCursor = love.mouse.getSystemCursor("hand")
 
-    self.hovered = false
-    self.pressed = false
+    self.hovered = false --mouse sobre el nodo
+    self.pressed = false --mouse sobre el nodo mientras se presiona el click
+    self.clicked = false --mouse sigue en el nodo después de presionar y soltar
+
+    self.managed = true
+    self.visible = true
 
     self.root = nil --primer nodo
     self.ui = nil
     self.container = nil --contenedor (se crea automaticamente al asignarle un padre)
     self.parent = nil --nodo padre
+
+    --falso por defecto. Cuando es true, se llama a los métodos para actualizar y dibujar a los hijos del nodo. Activar para crear layouts
+    self.manageChildren = false
+
+    --[[para las implementaciones de layouts, define si un layout ignora un nodo. tanto managed como visible son variables que unicamente el
+    usuario puede modificar. En cambio, ignoredByLayout puede ser modificada por el propio layout según la implementación]]
+    self.ignoredByLayout = false
 
     self.debugActive = false
 
@@ -43,6 +56,7 @@ end
 function Node:setDebugActive(debugActive)
     if not type(debugActive) == "boolean" then
         debugActive = false
+        return
     end
 
     self.debugActive = debugActive
@@ -55,18 +69,33 @@ este método para todos los nodos en la ui]]
 function Node:updateNode(dt)
     --actualizar el tamaño del contenedor
     if self.container ~= nil then
-        self.container_w = self.container.w
-        self.container_h = self.container.h
+        self.container_w, self.container_h = self.container:getDimensions()
     end
 
     --actualizar el tamaño de la ui
     if self.ui ~= nil then
-        self.ui_w = self.ui.w
-        self.ui_h = self.ui.h
+        self.ui_w, self.ui_h = self.ui:getDimensions()
     end
 
     if self.ui ~= nil and self.container ~= nil then
        self:checkHovered()
+    end
+
+    if self.focusable then
+        self:setCursor()
+    end
+
+    --actualiza los nodos hijos recursivamente
+    if self.manageChildren then
+        self:updateChildren(dt)
+    end
+end
+
+function Node:updateChildren(dt)
+    for _, container in ipairs(self.children) do
+        if container.node.managed then
+            container.node:updateNode(dt)
+        end
     end
 end
 
@@ -97,7 +126,7 @@ function Node:draw()
 end
 
 function Node:placeholder()
-    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.setColor(0, 0, 0, 0.2)
     love.graphics.rectangle("fill", 0, 0, self.w, self.h)
 end
 
@@ -108,43 +137,68 @@ function Node:setParent(parent, root, ui)
     self.root = root
     self.ui = ui
 
-    self.ui_w = ui.w
-    self.ui_h = ui.h
+    self.ui_w, self.ui_h = self.ui:getDimensions()
     self:resize()
 end
 
-function Node:addChild(child)
+function Node:addChildren(...)
     --[[cuando se agrega un nodo al arbol de componentes siempre se va a guardar la referencia al
     nodo raiz. Si no la tiene el nodo aún no ha sido agregado, por lo que no permite agregarle hijos]]
-
-    if self.root == nil then
-        return
+    if not self:has("root") then
+        error("El nodo no tiene padre, no se pueden agregar hijos.", 1)
     end
 
-    child:setParent(self, self.root)
+    local args = {...}
 
-    local childContainer = Container(1, 1, child)
-    table.insert(self.children, childContainer)
+    for _, child in ipairs(args) do
+        child:setParent(self, self.root, self.ui)
+        local childContainer = Container(1, 1, child)
+        table.insert(self.children, childContainer)
 
-    --[[todo nodo puede tener hijos, pero es responsabilidad de las subclases decidir si se renderizan y como se hace.
-    Usando la clase Node se pueden crear layouts que hereden de esta e implementen una forma de mostrar todos los hijos,
-    o se pueden crear componentes que unicamente se muestren a si mismos.]]
+        child:resize()
+    end
+
+    --[[todo nodo puede tener hijos, pero es responsabilidad de las subclases decidir si se renderizan y como se hace. Por
+    defecto, un nodo no tiene la capacidad de renderizar sus propios hijos (manageChildren). Usando la clase Node se pueden
+    crear layouts que hereden de esta e implementen una forma de mostrar todos los hijos, o se pueden crear componentes que
+    unicamente se muestren a si mismos.]]
 end
 
 
 
 --[[las dimensiones funcionan en base al porcentaje del tamaño del nodo raiz, siendo 1 la dimensión del nodo raíz, tanto en x como en y.]]
-function Node:setDimensions(relative_w, relative_h)
+function Node:setRelativeDimensions(relative_w, relative_h)
     self.relative_w = relative_w
     self.relative_h = relative_h
     self:resize()
 end
 
+function Node:setPixelDimensions(pixel_w, pixel_h)
+    self.w = pixel_w
+    self.h = pixel_h
+    self:resize()
+end
+
 function Node:resize()
-    self.w = self.relative_w * self.ui_w
-    self.h = self.relative_h * self.ui_h
+    if not self.ignoreRelative then
+        self.w = self.relative_w * self.ui_w
+        self.h = self.relative_h * self.ui_h
+    end
+
+    if self.w <= 0 then
+        self.w = 1
+    end
+    if self.h <= 0 then
+        self.h = 1
+    end
 
     self.canvas = love.graphics.newCanvas(self.w, self.h)
+end
+
+function Node:addContainer(container)
+    self.container = container
+    self.container_w, self.container_h = container:getDimensions()
+    self:resize()
 end
 
 
@@ -160,17 +214,17 @@ function Node:checkHovered()
     local mx, my = love.mouse.getPosition()
 
     self.hovered =
-    mx >= gx and
-    mx <= gx + gw and
-    my >= gy and
-    my <= gy + gh
+        mx >= gx and
+        mx <= gx + gw and
+        my >= gy and
+        my <= gy + gh
 
     self.pressed = self.hovered and love.mouse.isDown(1)
+end
 
+function Node:setCursor()
     if self.hovered then
-        love.mouse.setCursor(self.cursor)
-    else
-        love.mouse.setCursor()
+        love.mouse.setCursor(self.handCursor)
     end
 end
 
