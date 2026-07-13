@@ -4,7 +4,20 @@ _G.Point2D = require "rendering.Point2D"
 _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.utf8 = require "libs.utf8_simple"
+
+--creación de UIs
 _G.UI = require "ui.UI"
+local LinearLayout = require "ui.layouts.LinearLayout"
+local Node = require "ui.Node"
+
+local NodeDebug = Node:extend()
+function NodeDebug:draw()
+    --Node.draw(self)
+    --love.graphics.clear(1, 0, 0, 1)
+    love.graphics.setColor(1,1,1,1)
+    love.graphics.rectangle("fill", 0, 0, self.w, self.h, 20)
+    --love.graphics.rectangle("fill", 0, 0, self.w, self.h)
+end
 
 _G.SCREEN_WIDTH = nil
 _G.SCREEN_HEIGHT = nil
@@ -17,9 +30,12 @@ local a = require "rendering.Adapter"
 local r = require "rendering.Renderer"
 
 
-local ui = UI(400, 700, 750, 50)
+local ui
 
 function love.load()
+
+    createUI()
+
     local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
         Vertex(  0.25,  0.25,  0.25 ), --2
@@ -44,6 +60,7 @@ function love.load()
     r:setObj(vertices, faces)
 
     --a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
+
 end
 
 function love.update(dt)
@@ -54,4 +71,51 @@ end
 function love.draw()
     r:draw()
     ui:draw()
+end
+
+function _G.createUI()
+    local root = LinearLayout(LinearLayout.VERTICAL)
+
+    ui = UI(root, 400, 700, 750, 50)
+    ui:showBorders(true)
+
+    local n1 = Node()
+    n1:setDebugActive(true)
+    n1:setRelativeDimensions(0.2, 0.2)
+
+    local n2 = NodeDebug()
+    --n2:setDebugActive(true)
+    n2:setRelativeDimensions(0.2, 0.1)
+
+    local n3 = LinearLayout(LinearLayout.HORIZONTAL)
+    --n3:setDebugActive(true)
+    n3:setRelativeDimensions(0.2, 0.1)
+
+    root:addChildren(n1, n2, n3)
+
+    local n4 = NodeDebug()
+    --n4:setDebugActive(true)
+    n4:setRelativeDimensions(0.2, 0.2)
+
+    local n5 = NodeDebug()
+    --n5:setDebugActive(true)
+    n5:setRelativeDimensions(0.2, 0.2)
+
+    local n6 = LinearLayout(LinearLayout.VERTICAL)
+    n6:setDebugActive(true)
+
+    n3:addChildren(n4, n5, n6)
+
+    local n7 = Node()
+    n7:setDebugActive(true)
+    n7:setRelativeDimensions(0.1, 0.05)
+
+    local n8 = Node()
+    n8:setDebugActive(true)
+    n8:setRelativeDimensions(0.1, 0.05)
+
+    n6:addChildren(n7, n8)
+
+    --n8:setManaged(false)
+    --n8:setVisible(false)
 end

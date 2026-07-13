@@ -18,6 +18,7 @@ function Container:new(w, h, node)
     self.y = 0
 
     self.canvas = love.graphics.newCanvas(w, h)
+    self.canvas:setFilter("nearest", "nearest")
 end
 
 
@@ -25,6 +26,9 @@ end
 function Container:getNodePos()
     self.node_x = self.w / 2 - self.node.w / 2
     self.node_y = self.h / 2 - self.node.h / 2
+
+    self.node_x = math.floor(self.node_x)
+    self.node_y = math.floor(self.node_y)
 end
 
 
@@ -57,7 +61,7 @@ end
 function Container:drawChildren()
     for _, container in ipairs(self.node.children) do
 
-        if container.node.ignoredByLayout == false and container.node.visible then
+        if container.node.ignoredByLayout == false and container.node.visible and container.node.managed then
             container:drawToCanvas()
             --love.graphics.draw(container.canvas, container.x, container.y)
             love.graphics.draw(container.canvas, container.x + container.margin, container.y + container.margin)
@@ -94,12 +98,13 @@ function Container:setDimensions(w, h)
     self.w = math.floor(w)
     self.h = math.floor(h)
 
-    self.canvas = love.graphics.newCanvas(w, h)
+    self.canvas = love.graphics.newCanvas(self.w, self.h)
+    self.canvas:setFilter("nearest", "nearest")
 end
 
 function Container:getDimensions()
-    return self.w - self.margin * 2 ,
-        self.h - self.margin * 2
+    return math.floor(self.w - self.margin * 2) ,
+        math.floor(self.h - self.margin * 2)
 end
 
 return Container

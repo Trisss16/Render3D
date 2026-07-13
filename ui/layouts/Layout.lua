@@ -33,6 +33,15 @@ end
 
 
 
+function Layout:resize()
+    Node.resize(self)
+
+    --actualiza sus propios hijos
+    if self:has("container") then
+        self:defineChildrenContainers()
+    end
+end
+
 function Layout:addContainer(container)
     self.w, self.h = container:getDimensions()
     Node.addContainer(self, container)

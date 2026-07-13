@@ -1,6 +1,5 @@
 local Container = require "ui.Container"
 
-
 local Node = Class:create()
 
 function Node:new()
@@ -28,6 +27,9 @@ function Node:new()
     self.hovered = false --mouse sobre el nodo
     self.pressed = false --mouse sobre el nodo mientras se presiona el click
     self.clicked = false --mouse sigue en el nodo después de presionar y soltar
+    self.wasPressed = false
+
+    self.focusHintColor = {1, 1, 1, 0.95}
 
     self.managed = true
     self.visible = true
@@ -49,6 +51,7 @@ function Node:new()
     self.children = {} --lista de los hijos de este nodo
 
     self.canvas = love.graphics.newCanvas(self.w, self.h)
+    self.canvas:setFilter("nearest", "nearest")
 end
 
 
@@ -62,27 +65,41 @@ function Node:setDebugActive(debugActive)
     self.debugActive = debugActive
 end
 
+function Node:setManaged(managed)
+    self.managed = managed
+    self:resize()
+    
+    if self:has("parent") then
+        self.parent:resize()
+    end
+end
+
+function Node:setVisible(visible)
+    self.visible = visible
+end
+
 
 
 --[[updateNode actualiza datos importantes para el funcionamiento del nodo. Cada frame se llama a
 este método para todos los nodos en la ui]]
 function Node:updateNode(dt)
     --actualizar el tamaño del contenedor
-    if self.container ~= nil then
-        self.container_w, self.container_h = self.container:getDimensions()
-    end
+    self.container_w, self.container_h = self.container:getDimensions()
 
     --actualizar el tamaño de la ui
-    if self.ui ~= nil then
-        self.ui_w, self.ui_h = self.ui:getDimensions()
-    end
+    self.ui_w, self.ui_h = self.ui:getDimensions()
 
-    if self.ui ~= nil and self.container ~= nil then
-       self:checkHovered()
+    if self.focusable then
+        self:checkHovered()
+        self:checkClicked()
     end
 
     if self.focusable then
-        self:setCursor()
+        self:setHandCursor()
+    end
+
+    if self.clicked and self.focusable then
+        self.ui:giveFocus(self)
     end
 
     --actualiza los nodos hijos recursivamente
@@ -113,21 +130,36 @@ function Node:drawToCanvas()
     love.graphics.setCanvas(self.canvas)
 
         love.graphics.clear(0, 0, 0, 0)
+        love.graphics.setLineWidth(1)
         self:draw()
+        if self.isFocused then
+            self:drawFocusedHint()
+        end
 
     love.graphics.pop() --regresa al estado gráfico guardado antes de dibujar en el nodo
     love.graphics.setCanvas(current)
 end
 
+--Se sobreescribe para que cada subclase decida de que manera se renderiza
 function Node:draw()
     if self.debugActive then
-        self:placeholder()
+        self:drawPlaceholder()
     end
 end
 
-function Node:placeholder()
+function Node:drawPlaceholder()
     love.graphics.setColor(0, 0, 0, 0.2)
     love.graphics.rectangle("fill", 0, 0, self.w, self.h)
+end
+
+function Node:drawFocusedHint()
+    love.graphics.push("all")
+
+    love.graphics.setColor(self.focusHintColor)
+    love.graphics.setBlendMode("multiply", "premultiplied")
+    love.graphics.rectangle("fill", 0, 0, self.w, self.h)
+
+    love.graphics.pop()
 end
 
 
@@ -151,8 +183,8 @@ function Node:addChildren(...)
     local args = {...}
 
     for _, child in ipairs(args) do
-        child:setParent(self, self.root, self.ui)
         local childContainer = Container(1, 1, child)
+        child:setParent(self, self.root, self.ui)
         table.insert(self.children, childContainer)
 
         child:resize()
@@ -162,6 +194,16 @@ function Node:addChildren(...)
     defecto, un nodo no tiene la capacidad de renderizar sus propios hijos (manageChildren). Usando la clase Node se pueden
     crear layouts que hereden de esta e implementen una forma de mostrar todos los hijos, o se pueden crear componentes que
     unicamente se muestren a si mismos.]]
+end
+
+function Node:childrenSize()
+    local s = 0
+    for _, container in ipairs(self.children) do
+        if container.node.managed then
+            s = s + 1
+        end
+    end
+    return s
 end
 
 
@@ -192,7 +234,11 @@ function Node:resize()
         self.h = 1
     end
 
+    self.w = math.floor(self.w)
+    self.h = math.floor(self.h)
+
     self.canvas = love.graphics.newCanvas(self.w, self.h)
+    self.canvas:setFilter("nearest", "nearest")
 end
 
 function Node:addContainer(container)
@@ -222,7 +268,22 @@ function Node:checkHovered()
     self.pressed = self.hovered and love.mouse.isDown(1)
 end
 
-function Node:setCursor()
+function Node:checkClicked()
+    self.clicked = false
+
+    if self.pressed then
+        self.wasPressed = true
+    end
+
+    if self.wasPressed and not self.pressed and self.hovered then
+        self.wasPressed = false
+        self.clicked = true
+    elseif self.wasPressed and not self.pressed and not self.hovered then
+        self.wasPressed = false
+    end
+end
+
+function Node:setHandCursor()
     if self.hovered then
         love.mouse.setCursor(self.handCursor)
     end

@@ -17,14 +17,18 @@ end
 
 function LinearLayout:defineChildrenContainers()
     local cw, ch = self.container:getDimensions()
+    local s = self:childrenSize()
+
     local w, h
 
     if self.mode == self.HORIZONTAL then
-        w = cw / #self.children
+        --w = cw / #self.children
+        w = cw / s
         h = ch
     else
         w  = cw
-        h = ch / #self.children
+        --h = ch / #self.children
+        h = ch / s
     end
 
     if w <= 0 then w = 1 end
@@ -35,7 +39,7 @@ function LinearLayout:defineChildrenContainers()
     for _, container in ipairs(self.children) do
         container.node.ignoredByLayout = false
 
-        if not self.managed then
+        if not container.node.managed then
             goto continue
         end
 
