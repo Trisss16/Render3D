@@ -6,7 +6,7 @@ r.faces = nil
 --datos para las transformaciones y renderizado
 r.showVertices = false
 r.angle = 0
-r.objDistance = 600
+r.objDistance = 1
 
 --asignar vertices y caras
 function r:setObj(vertices, faces)
@@ -32,9 +32,9 @@ function r:update(dt)
     local translateVelocity = 100
 
     if love.mouse.isDown(1) then
-        self.angle = (self.angle + spinVelocity * dt) % (2 * math.pi)
-    elseif love.mouse.isDown(2) then
         self.angle = (self.angle - spinVelocity * dt) % (2 * math.pi)
+    elseif love.mouse.isDown(2) then
+        self.angle = (self.angle + spinVelocity * dt) % (2 * math.pi)
     end
 
     if love.keyboard.isDown("up") then

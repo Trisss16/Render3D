@@ -20,7 +20,7 @@ function Object:extend()
     child.__index = child
     setmetatable(child, self) --[[establece como metatabla a la clase padre, para que la clase hija tenga acceso a todos los metodos de esta]]
 
-    child.parent = self --guarda una referencia de la clase padre para el metodo super
+    child.super = self --guarda una referencia de la clase padre
     child["__call"] = self.__call --pasa el meta metodo call para poder instanciar todas las clases hijas
 
     return child
@@ -37,24 +37,10 @@ function Object:__call(...)
 end
 
 
-function Object:super(functName, ...)
-    local class = getmetatable(self)
-    local parent = getmetatable(class)
-
-    if type(parent[functName]) ~= "function" then
-        error("The " .. functName .. " function does not exists in the parent class.")
-    end
-
-    parent[functName](self, ...)
-end
-
-
---returns true if the 
 function Object:instanceOf(class)
     local parent = getmetatable(self)
 
     while parent do
-
         if parent == class then
             return true
         end
