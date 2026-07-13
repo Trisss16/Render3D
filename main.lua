@@ -3,6 +3,7 @@ _G.Class = require "libs.Class"
 _G.Point2D = require "rendering.Point2D"
 _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
+_G.Matrix = require "geometry.Matrix"
 _G.utf8 = require "libs.utf8_simple"
 local Button = require "ui.components.Button"
 
@@ -61,6 +62,23 @@ function love.load()
 
     --a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
 
+    local translate = Matrix({
+        {1, 0, 0, 2},
+        {0, 1, 0, 2},
+        {0, 0, 1, 2},
+        {0, 0, 0, 1}
+    })
+
+    local vector = Matrix({
+        {2},
+        {4},
+        {6},
+        {1}
+    })
+
+    local translated = translate * vector
+
+    translated:print()
 end
 
 function love.update(dt)
