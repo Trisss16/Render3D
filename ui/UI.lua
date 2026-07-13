@@ -14,6 +14,10 @@ function UI:new(node, w, h, x, y)
     self.focused = nil --al iniciar ningun nodo tiene el focus
     self.showFocusedHint = true
 
+    --para el manejo de texto
+    self.textInput = ""
+    self.backspaces = 0
+
     self.debug = false
 
     --fondo
@@ -34,6 +38,10 @@ function UI:update(dt)
 
     --actualiza el nodo principal y todos sus hijos
     self.root:updateNode(dt)
+
+    if love.keyboard.isDown then
+        
+    end
 
     if self:has("focused") then
         self.focused:update(dt)
@@ -64,11 +72,23 @@ function UI:setRounding(factor)
     self.bgRounding = self.w * factor
 end
 
-function UI:setFocusedHints(show)
-    self.showFocusedHint = show
+
+
+function UI:setTextInput(t)
+    self.textInput = self.textInput .. t
+end
+
+function UI:setKeyPressed(key)
+    if key == "backspace" then
+        self.backspaces = self.backspaces - 1
+    end
 end
 
 
+
+function UI:setFocusedHints(show)
+    self.showFocusedHint = show
+end
 
 function UI:giveFocus(node)
     if self:has("focused") then
@@ -78,6 +98,10 @@ function UI:giveFocus(node)
 
     node.isFocused = true
     self.focused = node
+
+    --cada que se cambia el focus se reinicia el texto
+    self.textInput = ""
+    self.backspaces = 0
 end
 
 

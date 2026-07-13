@@ -4,8 +4,8 @@ local Node = Class:create()
 
 function Node:new()
     --las dimensiones reales, en pixeles
-    self.w = 1
-    self.h = 1
+    self.w = 100
+    self.h = 50
 
     --dimensiones relativas, de 0 a 1, siendo 1 el tamaño de la ui.
     self.relative_w = 0.1

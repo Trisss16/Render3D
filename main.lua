@@ -5,13 +5,14 @@ _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.Matrix = require "geometry.Matrix"
 _G.utf8 = require "libs.utf8_simple"
-local Button = require "ui.components.Button"
 
 --creación de UIs
 _G.UI = require "ui.UI"
 local LinearLayout = require "ui.layouts.LinearLayout"
 local Node = require "ui.Node"
 local Color = require "ui.Color"
+local Button = require "ui.components.Button"
+local TextField = require "ui.components.TextField"
 
 local NodeDebug = Node:extend()
 function NodeDebug:draw()
@@ -78,6 +79,10 @@ function love.load()
 
     local translated = translate * vector
 
+    translate:print()
+    print()
+    vector:print()
+    print()
     translated:print()
 end
 
@@ -89,6 +94,14 @@ end
 function love.draw()
     r:draw()
     ui:draw()
+end
+
+function love.textinput(t)
+    ui:setTextInput(t)
+end
+
+function love.keypressed(key)
+    ui:setKeyPressed(key)
 end
 
 function _G.createUI()
@@ -148,16 +161,22 @@ function _G.createUI2()
 
     local btn1 = Button(Color.PURPLE, "hola", 30)
     btn1:setRelativeDimensions(0.3)
+    root:addChildren(btn1)
 
-    --[[btn1:addClickListeners(
+    btn1:addClickListeners(
         function ()
+            --local btn = Button(Color.PURPLE, "", 10)
+            --local btn = Button(Color.PURPLE, "")
             local btn = Button(Color.PURPLE)
             local random = 0.2 + math.random() * 0.3
             print(random)
             btn:setRelativeDimensions(random)
             root:addChildren(btn)
         end
-    )]]
+    )
 
-    root:addChildren(btn1)
+    local field = TextField()
+    field:setRelativeDimensions(0.7)
+
+    root:addChildren(field)
 end
