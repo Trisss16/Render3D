@@ -1,7 +1,7 @@
 local Container = require "ui.Container"
 local Node = require "ui.Node"
 local Layout = require "ui.layouts.Layout"
-local LinearLayout = require "ui.layouts.LinearLayout"
+local Color = require "ui.Color"
 
 local UI = Class:create()
 
@@ -12,11 +12,18 @@ function UI:new(node, w, h, x, y)
     self.h = h
 
     self.focused = nil --al iniciar ningun nodo tiene el focus
+    self.showFocusedHint = true
 
     self.debug = false
 
+    --fondo
+    self.useBgColor = true
+    self.bgColor = Color.GRAY
+    self.bgRoundingFactor = 0
+    self.bgRounding = self.w * self.bgRoundingFactor
+
     --nodo raíz
-    self.root = node or LinearLayout(LinearLayout.VERTICAL)
+    self.root = node or Layout()
     self.rootContainer = Container(w, h, self.root)
     self.root:setParent(nil, self.root, self) --se indica a si mismo como el nodo raiz
 end
@@ -35,13 +42,30 @@ end
 
 function UI:draw()
     --fondo
-    love.graphics.setColor(1, 0.5, 0.9)
-    love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
-    love.graphics.setColor(1, 1, 1, 1)
+    if self.useBgColor then
+        love.graphics.setColor(self.bgColor)
+        love.graphics.rectangle("fill", self.x, self.y, self.w, self.h, self.bgRounding)
+        love.graphics.setColor(1, 1, 1, 1)
+    end
 
     --contenedor del nodo raíz
     self.rootContainer:drawToCanvas()
     love.graphics.draw(self.rootContainer.canvas, self.x, self.y)
+end
+
+
+function UI:setBgColor(color)
+    self.bgColor = color
+    self.useBgColor = true
+end
+
+function UI:setRounding(factor)
+    self.bgRoundingFactor = factor
+    self.bgRounding = self.w * factor
+end
+
+function UI:setFocusedHints(show)
+    self.showFocusedHint = show
 end
 
 
@@ -59,6 +83,12 @@ end
 
 function UI:getDimensions()
     return self.w, self.h
+end
+
+function UI:setDimensions(w, h)
+    self.w = w
+    self.h = h
+    self:setRounding(self.bgRoundingFactor)
 end
 
 function UI:showBorders(show)

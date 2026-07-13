@@ -4,19 +4,19 @@ _G.Point2D = require "rendering.Point2D"
 _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.utf8 = require "libs.utf8_simple"
+local Button = require "ui.components.Button"
 
 --creación de UIs
 _G.UI = require "ui.UI"
 local LinearLayout = require "ui.layouts.LinearLayout"
 local Node = require "ui.Node"
+local Color = require "ui.Color"
 
 local NodeDebug = Node:extend()
 function NodeDebug:draw()
-    --Node.draw(self)
-    --love.graphics.clear(1, 0, 0, 1)
+    Node.draw(self)
     love.graphics.setColor(1,1,1,1)
     love.graphics.rectangle("fill", 0, 0, self.w, self.h, 20)
-    --love.graphics.rectangle("fill", 0, 0, self.w, self.h)
 end
 
 _G.SCREEN_WIDTH = nil
@@ -34,7 +34,7 @@ local ui
 
 function love.load()
 
-    createUI()
+    createUI2()
 
     local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
@@ -78,6 +78,7 @@ function _G.createUI()
 
     ui = UI(root, 400, 700, 750, 50)
     ui:showBorders(true)
+    ui:setBgColor(Color.PURPLE)
 
     local n1 = Node()
     n1:setDebugActive(true)
@@ -95,7 +96,8 @@ function _G.createUI()
 
     local n4 = NodeDebug()
     --n4:setDebugActive(true)
-    n4:setRelativeDimensions(0.2, 0.2)
+    --n4:setRelativeDimensions(0.2, 0.2)
+    n4:setRelativeDimensions(0.2)
 
     local n5 = NodeDebug()
     --n5:setDebugActive(true)
@@ -115,7 +117,29 @@ function _G.createUI()
     n8:setRelativeDimensions(0.1, 0.05)
 
     n6:addChildren(n7, n8)
+end
 
-    --n8:setManaged(false)
-    --n8:setVisible(false)
+function _G.createUI2()
+    local root = LinearLayout(LinearLayout.VERTICAL)
+
+    ui = UI(root, 400, 700, 750, 50)
+    --ui:showBorders(true)
+    --ui:setFocusedHints(false)
+    ui:setBgColor(Color.GRAY)
+    ui:setRounding(0.075)
+
+    local btn1 = Button(Color.PURPLE, "hola", 30)
+    btn1:setRelativeDimensions(0.3)
+
+    --[[btn1:addClickListeners(
+        function ()
+            local btn = Button(Color.PURPLE)
+            local random = 0.2 + math.random() * 0.3
+            print(random)
+            btn:setRelativeDimensions(random)
+            root:addChildren(btn)
+        end
+    )]]
+
+    root:addChildren(btn1)
 end

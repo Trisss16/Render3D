@@ -20,6 +20,9 @@ function Node:new()
     self.container_w = 0
     self.container_h = 0
 
+    --[[cuando al cambiar el tamaño con setRelativeDimensions no se indica el alto, este se calcula en base al ancho total, utilizando heightRatio]]
+    self.heightRatio = 0.5
+
     self.isFocused = false
     self.focusable = true
     self.handCursor = love.mouse.getSystemCursor("hand")
@@ -131,9 +134,18 @@ function Node:drawToCanvas()
 
         love.graphics.clear(0, 0, 0, 0)
         love.graphics.setLineWidth(1)
+
+        --contenido del nodo
         self:draw()
-        if self.isFocused then
+
+        --hint de focus
+        if self.isFocused and self.ui.showFocusedHint then
             self:drawFocusedHint()
+        end
+
+        --placeholder
+        if self.debugActive then
+            self:drawPlaceholder()
         end
 
     love.graphics.pop() --regresa al estado gráfico guardado antes de dibujar en el nodo
@@ -142,9 +154,6 @@ end
 
 --Se sobreescribe para que cada subclase decida de que manera se renderiza
 function Node:draw()
-    if self.debugActive then
-        self:drawPlaceholder()
-    end
 end
 
 function Node:drawPlaceholder()
@@ -211,7 +220,7 @@ end
 --[[las dimensiones funcionan en base al porcentaje del tamaño del nodo raiz, siendo 1 la dimensión del nodo raíz, tanto en x como en y.]]
 function Node:setRelativeDimensions(relative_w, relative_h)
     self.relative_w = relative_w
-    self.relative_h = relative_h
+    self.relative_h = relative_h or -1
     self:resize()
 end
 
@@ -221,10 +230,20 @@ function Node:setPixelDimensions(pixel_w, pixel_h)
     self:resize()
 end
 
+function Node:setHeightRatio(ratio)
+    self.heightRatio = ratio
+end
+
 function Node:resize()
     if not self.ignoreRelative then
         self.w = self.relative_w * self.ui_w
-        self.h = self.relative_h * self.ui_h
+
+        --cuando no se recibe un relative_h se le asigna -1. En ese caso, la altura (h) se calcula en base al ancho total (w), según la proporción
+        if self.relative_h == -1 then
+            self.h = self.w * self.heightRatio
+        else
+            self.h = self.relative_h * self.ui_h
+        end
     end
 
     if self.w <= 0 then
@@ -245,6 +264,10 @@ function Node:addContainer(container)
     self.container = container
     self.container_w, self.container_h = container:getDimensions()
     self:resize()
+end
+
+function Node:setMargin(margin)
+    
 end
 
 
