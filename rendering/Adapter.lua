@@ -6,7 +6,9 @@ function a:loadModel(path, renderer)
         return
     end
 
-    self.path = utf8.replace(path, {["\\"] = "/"}) --pasa el path al formato que lua usa
+    self.path = utf8.replace(path, {["\\"] = "/", ["\""] = ""}) --pasa el path al formato que lua usa
+
+    print(self.path)
 
     local foundFile = self:getContent()
 
@@ -44,6 +46,8 @@ function a:getContent()
     end
 
     file:close()
+
+    return true
 end
 
 function a:extractVertices()

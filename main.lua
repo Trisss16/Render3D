@@ -66,6 +66,7 @@ function love.load()
     --r:setObj(vertices, faces)
 
     --a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
+    a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycow\\cow.obj", r)
 
     local translate = Matrix({
         {1, 0, 0, 2},

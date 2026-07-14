@@ -6,7 +6,7 @@ r.faces = nil
 --datos para las transformaciones y renderizado
 r.showVertices = false
 r.angle = 0
-r.objDistance = 1
+r.objDistance = 1500
 
 --asignar vertices y caras
 function r:setObj(vertices, faces)
