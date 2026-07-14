@@ -2,6 +2,7 @@ local buildUI = {}
 
 local renderer = require "rendering.Renderer"
 local adapter = require "rendering.Adapter"
+local t = require "geometry.Transformations"
 local root
 
 function buildUI:get()
@@ -13,16 +14,16 @@ function buildUI:get()
 
     self:searchBar()
     --self:translateT()
-    self:escaleT()
-    --self:rotateTrans()
-    --self:shearTrans()
+    -- self:escaleT()
+    -- self:rotateTrans()
+    self:shearTrans()
 
     return ui
 end
 
 -- Barra de busqueda
 function buildUI:searchBar()
-    local container = LinearLayout(LinearLayout.VERTICAL)
+    local container = LinearLayout(LinearLayout.VERTICAL)x
     root:addChildren(container)
     container:setConstraints({0.4, 0.6})
 
@@ -134,30 +135,59 @@ function buildUI:rotateTrans()
         local rotateXY = LinearLayout(LinearLayout.VERTICAL)
         rotate:addChildren(rotateXY)
         local XYTitle = Label ("Rotate XY", 15)
-        --[[Hacer numérico los Field, hacer que me regrese los valores en un matriz]]
-        local XYField = TextField(20)
+        local XYField = TextField(20, "angle")
+        XYField:setNumeric(true)
+        XYField:setRelativeDimensions(0.18)
         local XYButton = Button(Color.GRAY, "send")
         XYButton:setRelativeDimensions(0.15)
         rotateXY:addChildren(XYTitle, XYField, XYButton)
+
+        XYButton:addClickListeners(function()
+            local rad = math.rad(XYField:getValue())
+            local matrixRotateXY = t:rotateXY_matrix(rad)
+
+            XYField:resetValue()
+            self:transformObject(matrixRotateXY)
+        end)
 
 
         -- Rotación en XZ
         local rotateXZ = LinearLayout(LinearLayout.VERTICAL)
         rotate:addChildren(rotateXZ)
         local XZTitle = Label ("Rotate XZ", 15)
-        local XZField = TextField(20)
+        local XZField = TextField(20, "angle")
+        XZField:setNumeric(true)
+        XZField:setRelativeDimensions(0.18)
         local XZButton = Button(Color.GRAY, "send")
         XZButton:setRelativeDimensions(0.15)
         rotateXZ:addChildren(XZTitle, XZField, XZButton)
+
+        XZButton:addClickListeners(function()
+            local rad = math.rad(XZField:getValue())
+            local matrixRotateXZ = t:rotateXZ_matrix(rad)
+
+                XZField:resetValue()
+            self:transformObject(matrixRotateXZ)
+        end)
 
         -- Rotación en YZ
         local rotateYZ = LinearLayout(LinearLayout.VERTICAL)
         rotate:addChildren(rotateYZ)
         local YZTitle = Label ("Rotate YZ", 15)
-        local YZField = TextField(20)
+        local YZField = TextField(20, "angle")
+        YZField:setNumeric(true)
+        YZField:setRelativeDimensions(0.18)
         local YZButton = Button(Color.GRAY, "send")
         YZButton:setRelativeDimensions(0.15)
         rotateYZ:addChildren(YZTitle, YZField, YZButton)
+
+        YZButton:addClickListeners(function()
+            local rad = math.rad(YZField:getValue())
+            local matrixRotateYZ = t:rotateYZ_matrix(rad)
+
+                YZField:resetValue()
+            self:transformObject(matrixRotateYZ)
+        end)
 end
 
 -- Transformación para sesgar
@@ -169,31 +199,67 @@ function buildUI:shearTrans()
         local shearXY = LinearLayout(LinearLayout.VERTICAL)
         shear:addChildren(shearXY)
         local XYTitle = Label ("Shear XY", 15)
-        local shxz = TextField(20)
-        local shyz = TextField(20)
+        local shxz = TextField(20, "shxz")
+        shxz:setNumeric(true)
+        shxz:setRelativeDimensions(0.15)
+        local shyz = TextField(20, "shyz")
+        shyz:setNumeric(true)
+        shyz:setRelativeDimensions(0.15)
         local XYButton = Button(Color.GRAY, "send")
         XYButton:setRelativeDimensions(0.15)
         shearXY:addChildren(XYTitle, shxz, shyz, XYButton)
+
+        XYButton:addClickListeners(function()
+            local matrixShearXY = t:ShearXY_matrix(shxz:getValue(), shyz:getValue())
+            shxz:resetValue()
+            shyz:resetValue()
+
+            self:transformObject(matrixShearXY)
+        end)
 
         -- Sesgado XZ
         local shearXZ = LinearLayout(LinearLayout.VERTICAL)
         shear:addChildren(shearXZ)
         local XZTitle = Label ("Shear XZ", 15)
-        local shxy = TextField(20)
-        local shzy = TextField(20)
+        local shxy = TextField(20, "shxy")
+        shxy:setNumeric(true)
+        shxy:setRelativeDimensions(0.15)
+        local shzy = TextField(20, "shzy")
+        shzy:setNumeric(true)
+        shzy:setRelativeDimensions(0.15)
         local XZButton = Button(Color.GRAY, "send")
         XZButton:setRelativeDimensions(0.15)
         shearXZ:addChildren(XZTitle, shxy, shzy, XZButton)
+
+        XZButton:addClickListeners(function()
+            local matrixShearXZ = t:ShearXZ_matrix(shxy:getValue(), shzy:getValue())
+            shxy:resetValue()
+            shzy:resetValue()
+            
+            self:transformObject(matrixShearXZ)
+        end)
 
         -- Sesgado YZ
         local shearYZ = LinearLayout(LinearLayout.VERTICAL)
         shear:addChildren(shearYZ)
         local YZTitle = Label ("Shear YZ", 15)
-        local shyx = TextField(20)
-        local shzx = TextField(20)
+        local shyx = TextField(20, "shyx")
+        shyx:setNumeric(true)
+        shyx:setRelativeDimensions(0.15)
+        local shzx = TextField(20, "shzx")
+        shzx:setNumeric(true)
+        shzx:setRelativeDimensions(0.15)
         local YZButton = Button(Color.GRAY, "send")
         YZButton:setRelativeDimensions(0.15)
         shearYZ:addChildren(YZTitle, shyx, shzx, YZButton)
+
+        YZButton:addClickListeners(function()
+            local matrixShearYZ = t:ShearYZ_matrix(shyx:getValue(), shzx:getValue())
+            shyx:resetValue()
+            shzx:resetValue()
+            
+            self:transformObject(matrixShearYZ)
+        end)
 end
 
 function buildUI:transformObject(matrix)
