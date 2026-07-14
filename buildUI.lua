@@ -6,17 +6,16 @@ local root
 
 function buildUI:get()
     root = LinearLayout()
-    --root:setConstraints({0.5})
-    --TODO: arreglar bug con los constraints
+    root:setConstraints({0.2, 0.5})
 
     local ui = UI(root, 350, 600, 800, 80)
     ui:showBorders(true)
 
     self:searchBar()
-    self:translateT()
+    --self:translateT()
     self:escaleT()
-    self:rotateTrans()
-    self:shearTrans()
+    --self:rotateTrans()
+    --self:shearTrans()
 
     return ui
 end
@@ -25,7 +24,7 @@ end
 function buildUI:searchBar()
     local container = LinearLayout(LinearLayout.VERTICAL)
     root:addChildren(container)
-    container:setConstraints({0.3, 0.7})
+    container:setConstraints({0.4, 0.6})
 
     local title = Label("Cargar modelo", 30)
     container:addChildren(title)
@@ -57,25 +56,30 @@ function buildUI:translateT()
     local titleT = Label("Traslación", 30)
     translateTrans:addChildren(titleT)
 
-    local tx = LinearLayout(LinearLayout.VERTICAL)
+    local constraints = {0.7, 0.3}
+
+    local tx = LinearLayout(LinearLayout.HORIZONTAL)
+    tx:setConstraints(constraints)
     translateTrans:addChildren(tx)
     local txTitle = Label("Traslación en X:",20)
     local txField = TextField(20)
-    txField:setRelativeDimensions(0.5,20)
+    txField:setRelativeDimensions(0.15)
     tx:addChildren(txTitle,txField)
 
-    local ty = LinearLayout(LinearLayout.VERTICAL)
+    local ty = LinearLayout(LinearLayout.HORIZONTAL)
+    ty:setConstraints(constraints)
     translateTrans:addChildren(ty)
     local tyTitle = Label("Traslación en Y:",20)
     local tyField = TextField(20)
-    tyField:setRelativeDimensions(0.5,20)
+    tyField:setRelativeDimensions(0.15)
     ty:addChildren(tyTitle,tyField)
 
-    local tz = LinearLayout(LinearLayout.VERTICAL)
+    local tz = LinearLayout(LinearLayout.HORIZONTAL)
+    tz:setConstraints(constraints)
     translateTrans:addChildren(tz)
     local tzTitle = Label("Traslación en Z:",20)
     local tzField = TextField(20)
-    tzField:setRelativeDimensions(0.5,20)
+    tzField:setRelativeDimensions(0.15)
     tz:addChildren(tzTitle,tzField)
 
     local TranslateButton = Button(Color.GREEN)
@@ -90,25 +94,30 @@ function buildUI:escaleT()
     local titleE = Label("Escalamiento", 30)
     escaleTrans:addChildren(titleE)
 
-    local sx = LinearLayout(LinearLayout.VERTICAL)
+    local constraints = {0.7, 0.3}
+
+    local sx = LinearLayout(LinearLayout.HORIZONTAL)
+    sx:setConstraints(constraints)
     escaleTrans:addChildren(sx)
     local sxTitle = Label("Escalamiento en X:")
     local sxField = TextField(20)
-    sxField:setRelativeDimensions(0.5,20)
+    sxField:setRelativeDimensions(0.15)
     sx:addChildren(sxTitle,sxField)
 
-    local sy = LinearLayout(LinearLayout.VERTICAL)
+    local sy = LinearLayout(LinearLayout.HORIZONTAL)
+    sy:setConstraints(constraints)
     escaleTrans:addChildren(sy)
     local syTitle = Label("Escalamiento en Y:")
     local syField = TextField(20)
-    syField:setRelativeDimensions(0.5,20)
+    syField:setRelativeDimensions(0.15)
     sy:addChildren(syTitle,syField)
 
-    local sz = LinearLayout(LinearLayout.VERTICAL)
+    local sz = LinearLayout(LinearLayout.HORIZONTAL)
+    sz:setConstraints(constraints)
     escaleTrans:addChildren(sz)
     local szTitle = Label("Escalamiento en Z:")
     local szField = TextField(20)
-    szField:setRelativeDimensions(0.5,20)
+    szField:setRelativeDimensions(0.15)
     sz:addChildren(szTitle,szField)
 
     local EscaleButton = Button(Color.GREEN)

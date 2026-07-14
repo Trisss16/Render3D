@@ -15,10 +15,22 @@ function LinearLayout:new(mode)
     self.mode = mode
 
     self.constraints = {}
+    self.defaultConstraint = 0
 end
 
 function LinearLayout:setConstraints(constraints)
+    local last
+
+    for _, value in ipairs(constraints) do
+        if type(value) ~= "number" then
+            error("Constraints invalidas.", 1)
+        end
+
+        last = value
+    end
+
     self.constraints = constraints
+    self.defaultConstraint = last
     self:resize()
 end
 
@@ -92,7 +104,7 @@ function LinearLayout:defineWithConstraints(cw, ch, w, h)
         if self.constraints[i] then
             constraint = self.constraints[i]
         else
-            constraint = last
+            constraint = self.defaultConstraint
         end
 
         if self.mode == self.HORIZONTAL then
