@@ -5,24 +5,20 @@ local Button = Node:extend()
 
 Button.bodyOffsetFactor = 0.015
 
-function Button:new(color, text, fontSize, fontPath)
+function Button:new(color, text, font)
     Node.new(self)
 
     self.color = color or Color.WHITE
     self.text = text or ""
-    self.fontSize = fontSize or 20
 
-    if fontPath then
-        self.font = love.graphics.getFont(fontPath, fontSize)
-    else
-        self.font = love.graphics.newFont(fontSize)
-    end
+    --inicializar fuente
+    self:initFont(font)
 
     self.textObj = love.graphics.newText(self.font, self.text)
 
     self.bodyShadow = 0.6
 
-    self.roundingFactor = 0.15
+    self.roundingFactor = 0.25
     self.topSizeFactor = 0.85
 
     self.clickListeners = {}
@@ -41,10 +37,12 @@ function Button:setButtonBodyHeight(relative_h)
     else
         self.bodyOffset = 15
     end
+    
+    self.bodyOffset = math.floor(self.bodyOffset)
 end
 
 function Button:getDrawingData()
-    self.rounding = math.floor(self.w * self.roundingFactor)
+    self.rounding = math.floor(self.h * self.roundingFactor)
 
     self.top_w = self.w
     --self.top_h = math.floor(self.h * self.topSizeFactor)
@@ -59,6 +57,10 @@ function Button:getTextData()
 
     self.text_x = self.top_w / 2 - self.text_w / 2
     self.text_y = self.top_h / 2 - self.text_h / 2
+
+    --convierte a enteros para evitar que el texto se vea borroso al dibujarse
+    self.text_x = math.floor(self.text_x)
+    self.text_y = math.floor(self.text_y)
 end
 
 function Button:resize()
@@ -120,9 +122,10 @@ function Button:drawText()
 
     if not self.pressed then
         love.graphics.draw(self.textObj, self.text_x, self.text_y)
+        --love.graphics.draw(self.textObj, math.floor(self.text_x), math.floor(self.text_y))
     else
         love.graphics.draw(self.textObj, self.text_x, self.text_y + self.bodyOffset)
-
+        --love.graphics.draw(self.textObj, math.floor(self.text_x), math.floor(self.text_y + self.bodyOffset))
     end
 end
 

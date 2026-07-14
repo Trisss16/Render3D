@@ -5,13 +5,15 @@ _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.Matrix = require "geometry.Matrix"
 _G.utf8 = require "libs.utf8_simple"
-local Button = require "ui.components.Button"
+local Label = require "ui.components.Label"
 
 --creación de UIs
 _G.UI = require "ui.UI"
 local LinearLayout = require "ui.layouts.LinearLayout"
 local Node = require "ui.Node"
 local Color = require "ui.Color"
+local Button = require "ui.components.Button"
+local TextField = require "ui.components.TextField"
 
 local NodeDebug = Node:extend()
 function NodeDebug:draw()
@@ -34,6 +36,7 @@ local r = require "rendering.Renderer"
 local ui
 
 function love.load()
+    love.graphics.setDefaultFilter("nearest", "nearest", 1)
 
     createUI2()
 
@@ -78,6 +81,10 @@ function love.load()
 
     local translated = translate * vector
 
+    translate:print()
+    print()
+    vector:print()
+    print()
     translated:print()
 end
 
@@ -89,6 +96,14 @@ end
 function love.draw()
     r:draw()
     ui:draw()
+end
+
+function love.textinput(t)
+    ui:textinput(t)
+end
+
+function love.keypressed(key)
+    ui:keypressed(key)
 end
 
 function _G.createUI()
@@ -138,26 +153,51 @@ function _G.createUI()
 end
 
 function _G.createUI2()
+    --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/")
+    --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
+    --local font = love.graphics.newFont("ui/fonts/Anton/Anton-Regular.ttf", 20)
+    --local font = love.graphics.newFont("ui/fonts/Lilita_One/LilitaOne-Regular.ttf", 20)
+
+
     local root = LinearLayout(LinearLayout.VERTICAL)
+    --root:setConstraints({0.4, 0.2, 0.1, 0.3})
+
 
     ui = UI(root, 400, 700, 750, 50)
-    --ui:showBorders(true)
+    ui:showBorders(true)
     --ui:setFocusedHints(false)
     ui:setBgColor(Color.GRAY)
     ui:setRounding(0.075)
 
-    local btn1 = Button(Color.PURPLE, "hola", 30)
-    btn1:setRelativeDimensions(0.3)
+    --local title = Label("hola hola hola hola hola hola hola hola", 40)
+    local title = Label("Texto")
+    root:addChildren(title)
 
-    --[[btn1:addClickListeners(
+
+    --local btn1 = Button(Color.PURPLE, "hola", font)
+    local btn1 = Button(Color.PURPLE, "hola")
+    btn1:setRelativeDimensions(0.3, 0.07)
+    root:addChildren(btn1)
+
+
+    btn1:addClickListeners(
         function ()
+            --local btn = Button(Color.PURPLE, "", 10)
+            --local btn = Button(Color.PURPLE, "")
             local btn = Button(Color.PURPLE)
             local random = 0.2 + math.random() * 0.3
-            print(random)
+            --print(random)
+            --btn:setRelativeDimensions(random, 0.07)
             btn:setRelativeDimensions(random)
             root:addChildren(btn)
         end
-    )]]
+    )
 
-    root:addChildren(btn1)
+
+    local field = TextField()
+    --local field = TextField(20)
+    --local field = TextField(font)
+    --field:setNumeric(true)
+    --field:setRelativeDimensions(0.7, 0.7)
+    root:addChildren(field)
 end

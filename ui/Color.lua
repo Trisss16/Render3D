@@ -9,6 +9,7 @@ Color.ORANGE    = {0.988, 0.62, 0.333}
 Color.PINK      = {1, 0.525, 0.969}
 Color.RED       = {1, 0.333, 0.333}
 Color.GRAY      = {0.7, 0.7, 0.7}
+Color.DARK_GRAY = {0.3, 0.3, 0.3}
 Color.WHITE     = {1, 1, 1}
 
 return Color

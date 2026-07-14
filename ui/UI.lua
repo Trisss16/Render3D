@@ -5,6 +5,9 @@ local Color = require "ui.Color"
 
 local UI = Class:create()
 
+UI.defaultFontPath = "ui/fonts/Lilita_One/LilitaOne-Regular.ttf"
+UI.defaultFont = love.graphics.newFont(UI.defaultFontPath, 20)
+
 function UI:new(node, w, h, x, y)
     self.x = x
     self.y = y
@@ -13,6 +16,13 @@ function UI:new(node, w, h, x, y)
 
     self.focused = nil --al iniciar ningun nodo tiene el focus
     self.showFocusedHint = true
+
+    --para el manejo de texto
+    self.inputBuffer = ""
+    self.inputText = ""
+    self.backspaceBuffer = false
+    self.backspace = false
+    love.keyboard.setKeyRepeat(true) --para multiples backspaces
 
     self.debug = false
 
@@ -32,12 +42,16 @@ function UI:update(dt)
     --deja el cursor original
     love.mouse.setCursor()
 
+    self:updateInputText()
+
     --actualiza el nodo principal y todos sus hijos
     self.root:updateNode(dt)
 
     if self:has("focused") then
         self.focused:update(dt)
     end
+
+    self:resetInputText()
 end
 
 function UI:draw()
@@ -64,11 +78,39 @@ function UI:setRounding(factor)
     self.bgRounding = self.w * factor
 end
 
-function UI:setFocusedHints(show)
-    self.showFocusedHint = show
+
+
+--[[en main, textinput se llama cada que se activa love.textinput(). Para poder utilizar este input, se guarda en un buffer, para ser utilizado en el frame
+siguiente. Este input debe de estar disponible durante un único frame, para evitar texto repetido. La detección de backspace funciona de manera similar]]
+
+function UI:textinput(t)
+    self.inputBuffer = t
+end
+
+function UI:keypressed(key)
+    if key == "backspace" then
+        self.backspaceBuffer = true
+    end
+end
+
+function UI:updateInputText()
+    self.inputText = self.inputBuffer
+    self.inputBuffer = ""
+
+    self.backspace = self.backspaceBuffer
+    self.backspaceBuffer = false
+end
+
+function UI:resetInputText()
+    self.inputText = ""
+    self.backspace = false
 end
 
 
+
+function UI:setFocusedHints(show)
+    self.showFocusedHint = show
+end
 
 function UI:giveFocus(node)
     if self:has("focused") then
@@ -77,8 +119,10 @@ function UI:giveFocus(node)
     end
 
     node.isFocused = true
+    node:getFocus()
     self.focused = node
 end
+
 
 
 function UI:getDimensions()
@@ -94,5 +138,18 @@ end
 function UI:showBorders(show)
     self.debug = show
 end
+
+
+
+function UI:getDefaultFont(size)
+    if love.filesystem.getInfo(self.defaultFontPath) then
+        return love.graphics.newFont(self.defaultFontPath, size)
+    else
+        print("No se pudo cargar la fuente default.")
+        return love.graphics.newFont(size)
+    end
+end
+
+
 
 return UI
