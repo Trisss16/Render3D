@@ -5,6 +5,7 @@ _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.Matrix = require "geometry.Matrix"
 _G.utf8 = require "libs.utf8_simple"
+local Label = require "ui.components.Label"
 
 --creación de UIs
 _G.UI = require "ui.UI"
@@ -155,10 +156,12 @@ function _G.createUI2()
     --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/")
     --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
     --local font = love.graphics.newFont("ui/fonts/Anton/Anton-Regular.ttf", 20)
-    local font = love.graphics.newFont("ui/fonts/Lilita_One/LilitaOne-Regular.ttf", 20)
+    --local font = love.graphics.newFont("ui/fonts/Lilita_One/LilitaOne-Regular.ttf", 20)
+
 
     local root = LinearLayout(LinearLayout.VERTICAL)
     --root:setConstraints({0.4, 0.2, 0.1, 0.3})
+
 
     ui = UI(root, 400, 700, 750, 50)
     ui:showBorders(true)
@@ -166,10 +169,16 @@ function _G.createUI2()
     ui:setBgColor(Color.GRAY)
     ui:setRounding(0.075)
 
+    --local title = Label("hola hola hola hola hola hola hola hola", 40)
+    local title = Label("Texto")
+    root:addChildren(title)
+
+
     --local btn1 = Button(Color.PURPLE, "hola", font)
     local btn1 = Button(Color.PURPLE, "hola")
     btn1:setRelativeDimensions(0.3, 0.07)
     root:addChildren(btn1)
+
 
     btn1:addClickListeners(
         function ()
@@ -184,13 +193,11 @@ function _G.createUI2()
         end
     )
 
+
     local field = TextField()
     --local field = TextField(20)
     --local field = TextField(font)
-
     --field:setNumeric(true)
-
-    field:setRelativeDimensions(0.7, 0.7)
-
+    --field:setRelativeDimensions(0.7, 0.7)
     root:addChildren(field)
 end

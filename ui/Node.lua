@@ -10,7 +10,8 @@ function Node:new()
     --dimensiones relativas, de 0 a 1, siendo 1 el tamaño de la ui.
     self.relative_w = 0.1
     self.relative_h = 0.05
-    self.ignoreRelative = false
+    self.ignoreRelativeWidth = false
+    self.ignoreRelativeHeight = false
 
     --el tamaño de la ui se asigna hasta que se agregue un nodo padre
     self.ui_w = 0
@@ -41,6 +42,10 @@ function Node:new()
     self.ui = nil
     self.container = nil --contenedor (se crea automaticamente al asignarle un padre)
     self.parent = nil --nodo padre
+
+    --[[cuando se le agrega un contenedor al nodo, un resize inmediato no actualiza correctamente
+    los tamaños, por eso se guarda un buffer que haga resize después del siguiente updateNode]]
+    self.resizeBuffer = false
 
     --falso por defecto. Cuando es true, se llama a los métodos para actualizar y dibujar a los hijos del nodo. Activar para crear layouts
     self.manageChildren = false
@@ -108,6 +113,11 @@ function Node:updateNode(dt)
     --actualiza los nodos hijos recursivamente
     if self.manageChildren then
         self:updateChildren(dt)
+    end
+
+    if self.resizeBuffer then
+        self.resizeBuffer = false
+        self:resize()
     end
 end
 
@@ -234,10 +244,17 @@ function Node:setHeightRatio(ratio)
     self.heightRatio = ratio
 end
 
-function Node:resize()
-    if not self.ignoreRelative then
-        self.w = self.relative_w * self.ui_w
+function Node:useRelativeDimensions(use)
+    self.ignoreRelativeWidth = not use
+    self.ignoreRelativeHeight = not use
+end
 
+function Node:resize()
+    if not self.ignoreRelativeWidth then
+        self.w = self.relative_w * self.ui_w
+    end
+
+    if not self.ignoreRelativeHeight then
         --cuando no se recibe un relative_h se le asigna -1. En ese caso, la altura (h) se calcula en base al ancho total (w), según la proporción
         if self.relative_h == -1 then
             self.h = self.w * self.heightRatio
@@ -263,7 +280,8 @@ end
 function Node:addContainer(container)
     self.container = container
     self.container_w, self.container_h = container:getDimensions()
-    self:resize()
+    --self:resize()
+    self.resizeBuffer = true
 end
 
 function Node:setMargin(margin)

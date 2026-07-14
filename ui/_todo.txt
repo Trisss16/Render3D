@@ -1,6 +1,0 @@
-* recorrer el arbol de nodos para actualizar y dibujar todos los nodos
-* linear layout
-* botón
-* text field
-labels
-constraints para LinearLayout

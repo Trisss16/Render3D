@@ -5,7 +5,7 @@ local TextField = Node:extend()
 
 function TextField:new(font)
     Node.new(self)
-    --self.ignoreRelative = true
+    self.ignoreRelativeHeight = true
 
     self.text = ""
 
@@ -67,6 +67,10 @@ function TextField:resize()
     Node.resize(self)
 end
 
+function TextField:useRelativeDimensions(use)
+    Node.useRelativeDimensions(self, use)
+    self.ignoreRelativeHeight = true
+end
 
 
 
@@ -85,7 +89,7 @@ function TextField:updateText(dt)
     local inputText = self.ui.inputText
 
     if self.numeric then
-        if tonumber(inputText) or inputText == "." then
+        if tonumber(self.text .. inputText) then
             self.text = self.text .. inputText
         end
     else
@@ -106,6 +110,20 @@ function TextField:updateCaretTimer(dt)
         self.caretTimer = 0
         self.drawCaret = not self.drawCaret
     end
+end
+
+
+
+function TextField:getValue()
+    if self.numeric then
+        if tonumber(self.text) then
+            return tonumber(self.text)
+        end
+
+        return 0
+    end
+
+    return self.text
 end
 
 
