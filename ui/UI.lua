@@ -5,6 +5,9 @@ local Color = require "ui.Color"
 
 local UI = Class:create()
 
+UI.defaultFontPath = "ui/fonts/Lilita_One/LilitaOne-Regular.ttf"
+UI.defaultFont = love.graphics.newFont(UI.defaultFontPath, 15)
+
 function UI:new(node, w, h, x, y)
     self.x = x
     self.y = y
@@ -121,6 +124,7 @@ function UI:giveFocus(node)
 end
 
 
+
 function UI:getDimensions()
     return self.w, self.h
 end
@@ -134,5 +138,18 @@ end
 function UI:showBorders(show)
     self.debug = show
 end
+
+
+
+function UI:getDefaultFont(size)
+    if love.filesystem.getInfo(self.defaultFontPath) then
+        return love.graphics.newFont(self.defaultFontPath, size)
+    else
+        print("No se pudo cargar la fuente default.")
+        return love.graphics.newFont(size)
+    end
+end
+
+
 
 return UI

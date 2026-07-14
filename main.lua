@@ -165,8 +165,9 @@ function _G.createUI2()
     ui:setBgColor(Color.GRAY)
     ui:setRounding(0.075)
 
-    local btn1 = Button(Color.PURPLE, "hola", font)
-    btn1:setRelativeDimensions(0.3)
+    --local btn1 = Button(Color.PURPLE, "hola", font)
+    local btn1 = Button(Color.PURPLE, "hola")
+    btn1:setRelativeDimensions(0.3, 0.07)
     root:addChildren(btn1)
 
     btn1:addClickListeners(
@@ -175,18 +176,20 @@ function _G.createUI2()
             --local btn = Button(Color.PURPLE, "")
             local btn = Button(Color.PURPLE)
             local random = 0.2 + math.random() * 0.3
-            print(random)
+            --print(random)
+            --btn:setRelativeDimensions(random, 0.07)
             btn:setRelativeDimensions(random)
             root:addChildren(btn)
         end
     )
 
-    --local field = TextField()
+    local field = TextField()
     --local field = TextField(20)
-    local field = TextField(font)
-    field:setNumeric(true)
+    --local field = TextField(font)
 
-    field:setRelativeDimensions(0.7, 1)
+    --field:setNumeric(true)
+
+    field:setRelativeDimensions(0.7, 0.7)
 
     root:addChildren(field)
 end

@@ -285,9 +285,11 @@ end
 --Inicializa una fuente, llamar en las clases hijas si se necesita usar texto
 function Node:initFont(font)
     if not font then
-        self.font = love.graphics.getFont()
+        --self.font = love.graphics.getFont()
+        self.font = UI.defaultFont
     elseif type(font) == "number" then
-        self.font = love.graphics.newFont(font)
+        --self.font = love.graphics.newFont(font)
+        self.font = UI:getDefaultFont(font)
     else
         if type(font) == "userdata" and font:typeOf("Font") then
             self.font = font

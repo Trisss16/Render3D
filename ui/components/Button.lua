@@ -18,7 +18,7 @@ function Button:new(color, text, font)
 
     self.bodyShadow = 0.6
 
-    self.roundingFactor = 0.15
+    self.roundingFactor = 0.25
     self.topSizeFactor = 0.85
 
     self.clickListeners = {}
@@ -40,7 +40,7 @@ function Button:setButtonBodyHeight(relative_h)
 end
 
 function Button:getDrawingData()
-    self.rounding = math.floor(self.w * self.roundingFactor)
+    self.rounding = math.floor(self.h * self.roundingFactor)
 
     self.top_w = self.w
     --self.top_h = math.floor(self.h * self.topSizeFactor)
