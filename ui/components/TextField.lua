@@ -126,6 +126,10 @@ function TextField:getValue()
     return self.text
 end
 
+function TextField:resetValue()
+    self.text = ""
+end
+
 
 
 function TextField:unfocus()

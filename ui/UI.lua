@@ -91,6 +91,12 @@ function UI:keypressed(key)
     if key == "backspace" then
         self.backspaceBuffer = true
     end
+
+    local ctrl = love.keyboard.isDown("lctrl", "rctrl")
+
+    if key == "v" and ctrl then
+        self.inputBuffer = love.system.getClipboardText()
+    end
 end
 
 function UI:updateInputText()
