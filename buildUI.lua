@@ -24,7 +24,7 @@ function buildUI:searchBar()
     bar:setConstraints({0.7, 0.3})
     root:addChildren(bar)
 
-    local field = TextField(20)
+    local field = TextField(20, "ruta de archivo")
     field:setRelativeDimensions(0.6)
     local btn = Button(Color.GREEN, "buscar")
     btn:setRelativeDimensions(0.2)
@@ -34,6 +34,7 @@ function buildUI:searchBar()
     --evento para cargar el archivo
     btn:addClickListeners(function ()
         local path = field:getValue()
+        field:resetValue()
         adapter:loadModel(path, renderer)
     end)
 

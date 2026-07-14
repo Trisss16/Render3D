@@ -3,17 +3,23 @@ local Color = require "ui.Color"
 
 local TextField = Node:extend()
 
-function TextField:new(font)
+function TextField:new(font, placeholderText)
     Node.new(self)
     self.ignoreRelativeHeight = true
 
     self.text = ""
+    self.placeholderText = placeholderText or ""
 
     self.numeric = false
 
     self.bgColor = Color.DARK_GRAY
     self.textColor = Color.WHITE
     self.caretColor = Color.WHITE
+    self.placeholderColor = {
+        self.bgColor[1] * 1.5,
+        self.bgColor[2] * 1.5,
+        self.bgColor[3] * 1.5
+    }
 
     --caret
     self.drawCaret = false
@@ -25,6 +31,7 @@ function TextField:new(font)
     self.rounding = math.floor(self.font:getHeight() / 2)
 
     self.textObj = love.graphics.newText(self.font, self.text)
+    self.placeholderObj = love.graphics.newText(self.font, self.placeholderText)
 
     self:getTextPosAndDimensions()
 end
@@ -32,6 +39,8 @@ end
 function TextField:setNumeric(numeric)
     self.numeric = numeric
 end
+
+
 
 function TextField:getTextPosAndDimensions()
     self.h = self.font:getHeight() * 1.75
@@ -60,7 +69,22 @@ function TextField:getTextPosAndDimensions()
     self.caret_x = self.text_x + self.text_w
     --self.caret_w = self.font:getWidth("|") / 2
     self.caret_w = math.floor(self.font:getHeight() * 0.15)
+
+    self:getPlaceholderText()
 end
+
+function TextField:getPlaceholderText()
+    self.placeholder_w = self.placeholderObj:getWidth()
+    self.placeholder_h = self.placeholderObj:getHeight()
+
+    self.placeholder_x = self.text_y
+    self.placeholder_y = self.text_y
+
+    self.placeholder_x = math.floor(self.placeholder_x)
+    self.placeholder_y = math.floor(self.placeholder_y)
+end
+
+
 
 function TextField:resize()
     self:getTextPosAndDimensions()
@@ -128,6 +152,8 @@ end
 
 function TextField:resetValue()
     self.text = ""
+    self.textObj = love.graphics.newText(self.font, self.text)
+    self:getTextPosAndDimensions()
 end
 
 
@@ -150,14 +176,22 @@ function TextField:draw()
     love.graphics.setColor(self.bgColor)
     love.graphics.rectangle("fill", 0, 0, self.w, self.h, self.rounding)
 
-    love.graphics.setColor(1,1,1)
+    love.graphics.setColor(self.textColor)
     love.graphics.draw(self.textObj, self.text_x, self.text_y)
+
+    --placeholder
+    --if not self.isFocused and self.text == "" then
+    if self.text == "" then
+        love.graphics.setColor(self.placeholderColor)
+        love.graphics.draw(self.placeholderObj, self.placeholder_x, self.placeholder_y)
+    end
 
     --caret
     if self.drawCaret then
         love.graphics.setColor(self.caretColor)
         love.graphics.rectangle("fill", self.caret_x, self.caret_y, self.caret_w, self.text_h)
     end
+
 end
 
 return TextField
