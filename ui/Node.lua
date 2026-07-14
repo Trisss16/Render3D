@@ -272,8 +272,29 @@ end
 
 
 
---cada subclase decide que hacer en el momento en el que pierde el focus sobreescribiendo el método
+--cada subclase decide que hacer en el momento en el que gana o pierde el focus sobreescribiendo el método
+
+function Node:getFocus()
+end
+
 function Node:unfocus()
+end
+
+
+
+--Inicializa una fuente, llamar en las clases hijas si se necesita usar texto
+function Node:initFont(font)
+    if not font then
+        self.font = love.graphics.getFont()
+    elseif type(font) == "number" then
+        self.font = love.graphics.newFont(font)
+    else
+        if type(font) == "userdata" and font:typeOf("Font") then
+            self.font = font
+        else
+            error("Fuente invalida")
+        end
+    end
 end
 
 

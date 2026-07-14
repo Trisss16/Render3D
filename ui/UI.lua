@@ -15,8 +15,11 @@ function UI:new(node, w, h, x, y)
     self.showFocusedHint = true
 
     --para el manejo de texto
-    self.textInput = ""
-    self.backspaces = 0
+    self.inputBuffer = ""
+    self.inputText = ""
+    self.backspaceBuffer = false
+    self.backspace = false
+    love.keyboard.setKeyRepeat(true) --para multiples backspaces
 
     self.debug = false
 
@@ -36,16 +39,16 @@ function UI:update(dt)
     --deja el cursor original
     love.mouse.setCursor()
 
+    self:updateInputText()
+
     --actualiza el nodo principal y todos sus hijos
     self.root:updateNode(dt)
-
-    if love.keyboard.isDown then
-        
-    end
 
     if self:has("focused") then
         self.focused:update(dt)
     end
+
+    self:resetInputText()
 end
 
 function UI:draw()
@@ -74,14 +77,30 @@ end
 
 
 
-function UI:setTextInput(t)
-    self.textInput = self.textInput .. t
+--[[en main, textinput se llama cada que se activa love.textinput(). Para poder utilizar este input, se guarda en un buffer, para ser utilizado en el frame
+siguiente. Este input debe de estar disponible durante un único frame, para evitar texto repetido. La detección de backspace funciona de manera similar]]
+
+function UI:textinput(t)
+    self.inputBuffer = t
 end
 
-function UI:setKeyPressed(key)
+function UI:keypressed(key)
     if key == "backspace" then
-        self.backspaces = self.backspaces - 1
+        self.backspaceBuffer = true
     end
+end
+
+function UI:updateInputText()
+    self.inputText = self.inputBuffer
+    self.inputBuffer = ""
+
+    self.backspace = self.backspaceBuffer
+    self.backspaceBuffer = false
+end
+
+function UI:resetInputText()
+    self.inputText = ""
+    self.backspace = false
 end
 
 
@@ -97,11 +116,8 @@ function UI:giveFocus(node)
     end
 
     node.isFocused = true
+    node:getFocus()
     self.focused = node
-
-    --cada que se cambia el focus se reinicia el texto
-    self.textInput = ""
-    self.backspaces = 0
 end
 
 

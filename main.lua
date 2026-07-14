@@ -35,6 +35,7 @@ local r = require "rendering.Renderer"
 local ui
 
 function love.load()
+    love.graphics.setDefaultFilter("nearest", "nearest", 1)
 
     createUI2()
 
@@ -97,11 +98,11 @@ function love.draw()
 end
 
 function love.textinput(t)
-    ui:setTextInput(t)
+    ui:textinput(t)
 end
 
 function love.keypressed(key)
-    ui:setKeyPressed(key)
+    ui:keypressed(key)
 end
 
 function _G.createUI()
@@ -151,6 +152,11 @@ function _G.createUI()
 end
 
 function _G.createUI2()
+    --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/")
+    --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
+    --local font = love.graphics.newFont("ui/fonts/Anton/Anton-Regular.ttf", 20)
+    local font = love.graphics.newFont("ui/fonts/Lilita_One/LilitaOne-Regular.ttf", 20)
+
     local root = LinearLayout(LinearLayout.VERTICAL)
 
     ui = UI(root, 400, 700, 750, 50)
@@ -159,7 +165,7 @@ function _G.createUI2()
     ui:setBgColor(Color.GRAY)
     ui:setRounding(0.075)
 
-    local btn1 = Button(Color.PURPLE, "hola", 30)
+    local btn1 = Button(Color.PURPLE, "hola", font)
     btn1:setRelativeDimensions(0.3)
     root:addChildren(btn1)
 
@@ -175,8 +181,12 @@ function _G.createUI2()
         end
     )
 
-    local field = TextField()
-    field:setRelativeDimensions(0.7)
+    --local field = TextField()
+    --local field = TextField(20)
+    local field = TextField(font)
+    field:setNumeric(true)
+
+    field:setRelativeDimensions(0.7, 1)
 
     root:addChildren(field)
 end

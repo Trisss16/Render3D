@@ -3,3 +3,4 @@
 * botón
 text field
 labels
+constraints para LinearLayout

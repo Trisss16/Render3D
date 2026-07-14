@@ -5,18 +5,14 @@ local Button = Node:extend()
 
 Button.bodyOffsetFactor = 0.015
 
-function Button:new(color, text, fontSize, fontPath)
+function Button:new(color, text, font)
     Node.new(self)
 
     self.color = color or Color.WHITE
     self.text = text or ""
-    self.fontSize = fontSize or 20
 
-    if fontPath then
-        self.font = love.graphics.newFont(fontPath, self.fontSize)
-    else
-        self.font = love.graphics.newFont(self.fontSize)
-    end
+    --inicializar fuente
+    self:initFont(font)
 
     self.textObj = love.graphics.newText(self.font, self.text)
 
