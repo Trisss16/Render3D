@@ -5,15 +5,18 @@ _G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.Matrix = require "geometry.Matrix"
 _G.utf8 = require "libs.utf8_simple"
-local Label = require "ui.components.Label"
+
 
 --creación de UIs
 _G.UI = require "ui.UI"
-local LinearLayout = require "ui.layouts.LinearLayout"
-local Node = require "ui.Node"
-local Color = require "ui.Color"
-local Button = require "ui.components.Button"
-local TextField = require "ui.components.TextField"
+_G.LinearLayout = require "ui.layouts.LinearLayout"
+_G.Node = require "ui.Node"
+_G.Color = require "ui.Color"
+_G.Button = require "ui.components.Button"
+_G.TextField = require "ui.components.TextField"
+_G.Label = require "ui.components.Label"
+
+local buildUI = require "buildUI"
 
 local NodeDebug = Node:extend()
 function NodeDebug:draw()
@@ -38,7 +41,8 @@ local ui
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
 
-    createUI2()
+    --createUI38()
+    ui = buildUI:get()
 
     local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
@@ -160,7 +164,7 @@ function _G.createUI2()
 
 
     local root = LinearLayout(LinearLayout.VERTICAL)
-    --root:setConstraints({0.4, 0.2, 0.1, 0.3})
+    root:setConstraints({0.4, 0.2, 0.1, 0.3})
 
 
     ui = UI(root, 400, 700, 750, 50)
@@ -198,6 +202,36 @@ function _G.createUI2()
     --local field = TextField(20)
     --local field = TextField(font)
     --field:setNumeric(true)
-    --field:setRelativeDimensions(0.7, 0.7)
+    field:setRelativeDimensions(0.7, 0.7)
     root:addChildren(field)
+end
+
+
+function _G.createUI3()
+    local linear = LinearLayout(LinearLayout.VERTICAL)
+    linear:setConstraints({0.4, 0.4, 0.2})
+
+    ui = UI(linear, 500, 500, 100, 100)
+    ui:setBgColor(Color.GREEN)
+    ui:setRounding(0.05)
+    ui:showBorders(true)
+
+    local btn1 = Button(Color.GRAY, "text", 40)
+    btn1:setRelativeDimensions(0.4)
+    linear:addChildren(btn1)
+
+    local l2 = LinearLayout(LinearLayout.HORIZONTAL)
+    linear:addChildren(l2)
+    local btn2, btn3 = Button(), Button()
+    l2:addChildren(btn2, btn3)
+
+
+    local field = TextField(20)
+    field:setNumeric(true)
+    field:setRelativeDimensions(0.5)
+    linear:addChildren(field)
+
+    btn1:addClickListeners(function ()
+        print(field:getValue())
+    end)
 end
