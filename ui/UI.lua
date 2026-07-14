@@ -6,7 +6,7 @@ local Color = require "ui.Color"
 local UI = Class:create()
 
 UI.defaultFontPath = "ui/fonts/Lilita_One/LilitaOne-Regular.ttf"
-UI.defaultFont = love.graphics.newFont(UI.defaultFontPath, 15)
+UI.defaultFont = love.graphics.newFont(UI.defaultFontPath, 20)
 
 function UI:new(node, w, h, x, y)
     self.x = x

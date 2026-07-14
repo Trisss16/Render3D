@@ -37,6 +37,8 @@ function Button:setButtonBodyHeight(relative_h)
     else
         self.bodyOffset = 15
     end
+    
+    self.bodyOffset = math.floor(self.bodyOffset)
 end
 
 function Button:getDrawingData()
@@ -55,6 +57,10 @@ function Button:getTextData()
 
     self.text_x = self.top_w / 2 - self.text_w / 2
     self.text_y = self.top_h / 2 - self.text_h / 2
+
+    --convierte a enteros para evitar que el texto se vea borroso al dibujarse
+    self.text_x = math.floor(self.text_x)
+    self.text_y = math.floor(self.text_y)
 end
 
 function Button:resize()
@@ -116,9 +122,10 @@ function Button:drawText()
 
     if not self.pressed then
         love.graphics.draw(self.textObj, self.text_x, self.text_y)
+        --love.graphics.draw(self.textObj, math.floor(self.text_x), math.floor(self.text_y))
     else
         love.graphics.draw(self.textObj, self.text_x, self.text_y + self.bodyOffset)
-
+        --love.graphics.draw(self.textObj, math.floor(self.text_x), math.floor(self.text_y + self.bodyOffset))
     end
 end
 

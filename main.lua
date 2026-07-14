@@ -158,9 +158,10 @@ function _G.createUI2()
     local font = love.graphics.newFont("ui/fonts/Lilita_One/LilitaOne-Regular.ttf", 20)
 
     local root = LinearLayout(LinearLayout.VERTICAL)
+    --root:setConstraints({0.4, 0.2, 0.1, 0.3})
 
     ui = UI(root, 400, 700, 750, 50)
-    --ui:showBorders(true)
+    ui:showBorders(true)
     --ui:setFocusedHints(false)
     ui:setBgColor(Color.GRAY)
     ui:setRounding(0.075)

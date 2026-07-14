@@ -13,6 +13,13 @@ function LinearLayout:new(mode)
     end
 
     self.mode = mode
+
+    self.constraints = {}
+end
+
+function LinearLayout:setConstraints(constraints)
+    self.constraints = constraints
+    self:resize()
 end
 
 function LinearLayout:defineChildrenContainers()
@@ -34,6 +41,15 @@ function LinearLayout:defineChildrenContainers()
     if w <= 0 then w = 1 end
     if h <= 0 then h = 1 end
 
+    if #self.constraints == 0 then
+        self:defineNoConstraints(w, h)
+    else
+        self:defineWithConstraints(cw, ch, w, h)
+    end
+end
+
+
+function LinearLayout:defineNoConstraints(w, h)
     local acum = 0
 
     for _, container in ipairs(self.children) do
@@ -51,6 +67,44 @@ function LinearLayout:defineChildrenContainers()
         else
             container:setPos(0, acum)
             acum = acum + h
+        end
+
+        ::continue::
+    end
+end
+
+
+function LinearLayout:defineWithConstraints(cw, ch, w, h)
+    local last = self.constraints[#self.constraints - 1]
+
+    local acum = 0
+
+    for i, container in ipairs(self.children) do
+        container.node.ignoredByLayout = false
+
+        if not container.node.managed then
+            goto continue
+        end
+
+        local constraint
+
+        --si ya no hay mas constraints, el resto de elementos usarán la última del arreglo
+        if self.constraints[i] then
+            constraint = self.constraints[i]
+        else
+            constraint = last
+        end
+
+        if self.mode == self.HORIZONTAL then
+            constraint = constraint * cw
+            container:setDimensions(constraint, h)
+            container:setPos(acum, 0)
+            acum = acum + constraint
+        else
+            constraint = constraint * ch
+            container:setDimensions(w, constraint)
+            container:setPos(0, acum)
+            acum = acum + constraint
         end
 
         ::continue::
