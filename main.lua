@@ -16,8 +16,6 @@ _G.Button = require "ui.components.Button"
 _G.TextField = require "ui.components.TextField"
 _G.Label = require "ui.components.Label"
 
-local buildUI = require "buildUI"
-
 local NodeDebug = Node:extend()
 function NodeDebug:draw()
     Node.draw(self)
@@ -34,6 +32,7 @@ ASPECT_RATIO = SCREEN_WIDTH / SCREEN_HEIGHT
 
 local a = require "rendering.Adapter"
 local r = require "rendering.Renderer"
+local buildUI = require "buildUI"
 
 
 local ui
@@ -42,7 +41,6 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
 
     --createUI38()
-    ui = buildUI:get()
 
     local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
@@ -65,7 +63,7 @@ function love.load()
         {4, 8},
     }
 
-    r:setObj(vertices, faces)
+    --r:setObj(vertices, faces)
 
     --a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
 
@@ -90,6 +88,8 @@ function love.load()
     vector:print()
     print()
     translated:print()
+
+    ui = buildUI:get()
 end
 
 function love.update(dt)

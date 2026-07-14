@@ -8,7 +8,11 @@ function a:loadModel(path, renderer)
 
     self.path = utf8.replace(path, {["\\"] = "/"}) --pasa el path al formato que lua usa
 
-    self:getContent()
+    local foundFile = self:getContent()
+
+    if not foundFile then
+        return
+    end
 
     local vertices = self:extractVertices()
     local faces = self:extractFaces()
@@ -21,7 +25,7 @@ function a:getContent()
 
     if file == nil then
         print("No se encontro el archivo")
-        return
+        return false
     end
 
     self.vStr = {}
