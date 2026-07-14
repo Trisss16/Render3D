@@ -1,0 +1,11 @@
+permitir scroll en layouts
+
+función para transformar los vertices en buildUI
+
+calcular el ancho, alto y profundidad del modelo y mostrarlo en la ui 
+
+calcular velocidad de zoom en renderer
+
+modulo para recibir inputs que interactue con renderer
+
+renderizar caras con shading simple

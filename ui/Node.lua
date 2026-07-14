@@ -209,6 +209,12 @@ function Node:addChildren(...)
         child:resize()
     end
 
+    if self:has("parent") then
+        Node:recursiveResize(self.parent)
+    else
+        Node:recursiveResize(self)
+    end
+
     --[[todo nodo puede tener hijos, pero es responsabilidad de las subclases decidir si se renderizan y como se hace. Por
     defecto, un nodo no tiene la capacidad de renderizar sus propios hijos (manageChildren). Usando la clase Node se pueden
     crear layouts que hereden de esta e implementen una forma de mostrar todos los hijos, o se pueden crear componentes que
@@ -223,6 +229,14 @@ function Node:childrenSize()
         end
     end
     return s
+end
+
+function Node:recursiveResize(node)
+    node:resize()
+
+    for _, container in ipairs(node.children) do
+        Node:recursiveResize(container.node)
+    end
 end
 
 

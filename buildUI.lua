@@ -7,8 +7,11 @@ local root
 function buildUI:get()
     root = LinearLayout()
     --root:setConstraints({0.5})
+    --TODO: arreglar bug con los constraints
 
     local ui = UI(root, 350, 600, 800, 80)
+    ui:showBorders(true)
+
     self:searchBar()
     self:translateT()
     self:escaleT()
@@ -20,9 +23,16 @@ end
 
 -- Barra de busqueda
 function buildUI:searchBar()
+    local container = LinearLayout(LinearLayout.VERTICAL)
+    root:addChildren(container)
+    container:setConstraints({0.3, 0.7})
+
+    local title = Label("Cargar modelo", 30)
+    container:addChildren(title)
+
     local bar = LinearLayout(LinearLayout.HORIZONTAL)
     bar:setConstraints({0.7, 0.3})
-    root:addChildren(bar)
+    container:addChildren(bar)
 
     local field = TextField(20, "ruta de archivo")
     field:setRelativeDimensions(0.6)
@@ -179,6 +189,8 @@ end
 
 function buildUI:transformObject(matrix)
     local vertices = renderer.vertices
-    
+    print("Transformando objeto con la matriz: ")
+    matrix:print()
+    print()
 end
 return buildUI
