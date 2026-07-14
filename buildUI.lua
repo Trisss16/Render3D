@@ -10,6 +10,8 @@ function buildUI:get()
 
     local ui = UI(root, 350, 600, 800, 80)
     self:searchBar()
+    self:translateT()
+    self:escaleT()
     self:rotateTrans()
     self:shearTrans()
 
@@ -37,6 +39,71 @@ function buildUI:searchBar()
 
 end
 
+-- Tarnsformacion para trasladar 
+function buildUI:translateT()
+    local translateTrans = LinearLayout(LinearLayout.VERTICAL)
+    root:addChildren(translateTrans)
+    local titleT = Label("Traslación", 30)
+    translateTrans:addChildren(titleT)
+
+    local tx = LinearLayout(LinearLayout.VERTICAL)
+    translateTrans:addChildren(tx)
+    local txTitle = Label("Traslación en X:",20)
+    local txField = TextField(20)
+    txField:setRelativeDimensions(0.5,20)
+    tx:addChildren(txTitle,txField)
+
+    local ty = LinearLayout(LinearLayout.VERTICAL)
+    translateTrans:addChildren(ty)
+    local tyTitle = Label("Traslación en Y:",20)
+    local tyField = TextField(20)
+    tyField:setRelativeDimensions(0.5,20)
+    ty:addChildren(tyTitle,tyField)
+
+    local tz = LinearLayout(LinearLayout.VERTICAL)
+    translateTrans:addChildren(tz)
+    local tzTitle = Label("Traslación en Z:",20)
+    local tzField = TextField(20)
+    tzField:setRelativeDimensions(0.5,20)
+    tz:addChildren(tzTitle,tzField)
+
+    local TranslateButton = Button(Color.GREEN)
+    translateTrans:addChildren(TranslateButton)
+
+end
+
+-- Transformacion para escalamiento
+function buildUI:escaleT()
+    local escaleTrans = LinearLayout(LinearLayout.VERTICAL)
+    root:addChildren(escaleTrans)
+    local titleE = Label("Escalamiento", 30)
+    escaleTrans:addChildren(titleE)
+
+    local sx = LinearLayout(LinearLayout.VERTICAL)
+    escaleTrans:addChildren(sx)
+    local sxTitle = Label("Escalamiento en X:")
+    local sxField = TextField(20)
+    sxField:setRelativeDimensions(0.5,20)
+    sx:addChildren(sxTitle,sxField)
+
+    local sy = LinearLayout(LinearLayout.VERTICAL)
+    escaleTrans:addChildren(sy)
+    local syTitle = Label("Escalamiento en Y:")
+    local syField = TextField(20)
+    syField:setRelativeDimensions(0.5,20)
+    sy:addChildren(syTitle,syField)
+
+    local sz = LinearLayout(LinearLayout.VERTICAL)
+    escaleTrans:addChildren(sz)
+    local szTitle = Label("Escalamiento en Z:")
+    local szField = TextField(20)
+    szField:setRelativeDimensions(0.5,20)
+    sz:addChildren(szTitle,szField)
+
+    local EscaleButton = Button(Color.GREEN)
+    escaleTrans:addChildren(EscaleButton)
+    
+end
 
 -- Transformación para rotar
 function buildUI:rotateTrans()
@@ -47,6 +114,7 @@ function buildUI:rotateTrans()
         local rotateXY = LinearLayout(LinearLayout.VERTICAL)
         rotate:addChildren(rotateXY)
         local XYTitle = Label ("Rotate XY", 15)
+        --[[Hacer numérico los Field, hacer que me regrese los valores en un matriz]]
         local XYField = TextField(20)
         local XYButton = Button(Color.GRAY, "send")
         XYButton:setRelativeDimensions(0.15)
