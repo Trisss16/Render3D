@@ -29,10 +29,26 @@ function buildUI:get()
 end
 
 function buildUI:modelLabels()
-    local modelLayout = LinearLayout(LinearLayout.VERTICAL)
-    root:addChildren(modelLayout)
+    local layout = LinearLayout(LinearLayout.HORIZONTAL)
+    layout:setConstraints({0.6, 0.4})
+    root:addChildren(layout)
 
-    modelLayout:addChildren(self.widthLabel, self.heightLabel, self.depthLabel)
+    local labelsLayout = LinearLayout(LinearLayout.VERTICAL)
+    layout:addChildren(labelsLayout)
+
+    labelsLayout:addChildren(self.widthLabel, self.heightLabel, self.depthLabel)
+
+    local resetLayout = LinearLayout(LinearLayout.VERTICAL)
+    layout:addChildren(resetLayout)
+
+    local resetLabel = Label("Reiniciar\nmodelo", 25)
+    local resetBtn = Button(Color.GREEN, "Reiniciar")
+    resetBtn:setRelativeDimensions(0.25)
+    resetLayout:addChildren(resetLabel, resetBtn)
+
+    resetBtn:addClickListeners(function ()
+        renderer:resetInputs()
+    end)
 end
 
 -- Barra de busqueda
@@ -61,11 +77,7 @@ function buildUI:searchBar()
         field:resetValue()
         adapter:loadModel(path, renderer)
 
-        if renderer.width and renderer.height and renderer.depth then
-            self.widthLabel:setText(string.format("Ancho: %.1f", renderer.width))
-            self.heightLabel:setText(string.format("Alto: %.1f", renderer.height))
-            self.depthLabel:setText(string.format("Profundo: %.1f", renderer.depth))
-        end
+        self:displayModelDimensions()
     end)
 
 end
@@ -124,6 +136,7 @@ function buildUI:translateT()
 
         self:transformObject(matrixTranslate)
 
+        matrixTranslate:print()
     end)
 
 end
@@ -332,8 +345,27 @@ end
 
 function buildUI:transformObject(matrix)
     local vertices = renderer.vertices
-    print("Transformando objeto con la matriz: ")
+
+    --[[print("Transformando objeto con la matriz: ")
     matrix:print()
-    print()
+    print()]]
+
+    for i, vertex in ipairs(vertices) do
+        local vector = matrix * vertex.vector
+        vertices[i] = Vertex(vector)
+    end
+
+    renderer:getRenderingData()
+    self:displayModelDimensions()
+end
+
+
+
+function buildUI:displayModelDimensions()
+    if renderer.width and renderer.height and renderer.depth then
+        self.widthLabel:setText(string.format("Ancho: %.1f", renderer.width))
+        self.heightLabel:setText(string.format("Alto: %.1f", renderer.height))
+        self.depthLabel:setText(string.format("Profundo: %.1f", renderer.depth))
+    end
 end
 return buildUI

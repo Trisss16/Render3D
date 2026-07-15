@@ -30,29 +30,6 @@ function love.load()
 
     renderer:setPosAndDimensions(800, 800, 0, 0)
 
-    --[[local vertices = {
-        Vertex( -0.25,  0.25,  0.25 ), --1
-        Vertex(  0.25,  0.25,  0.25 ), --2
-        Vertex(  0.25, -0.25,  0.25 ), --3
-        Vertex( -0.25, -0.25,  0.25 ), --4
-
-        Vertex( -0.25,  0.25, -0.25 ), --5
-        Vertex(  0.25,  0.25, -0.25 ), --6
-        Vertex(  0.25, -0.25, -0.25 ), --7
-        Vertex( -0.25, -0.25, -0.25 ), --8
-    }
-
-    local faces = {
-        {1, 2, 3, 4},
-        {5, 6, 7, 8},
-        {1, 5},
-        {2, 6},
-        {3, 7},
-        {4, 8},
-    }
-
-    renderer:setObj(vertices, faces)]]
-
     ui = buildUI:get()
 end
 

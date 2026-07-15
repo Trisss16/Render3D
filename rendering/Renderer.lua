@@ -24,6 +24,7 @@ function r:setObj(vertices, faces)
     self.faces = faces
 
     self:getRenderingData()
+    self:resetInputs()
 end
 
 function r:setPosAndDimensions(w, h, x, y)
@@ -78,8 +79,6 @@ function r:getRenderingData()
     end
 
     self.zoomVelocity = self.wide * 1.5
-    self.objDistance = self.wide * 3
-
     self.spinVelocity = math.pi / 2
 end
 
@@ -157,6 +156,12 @@ end
 
 function r:project2D(vertex)
     return Point2D(vertex.x / vertex.z, vertex.y / vertex.z)
+end
+
+function r:resetInputs()
+    self.objDistance = self.wide * 3
+    self.XZAngle = 0
+    self.YZAngle = 0
 end
 
 return r
