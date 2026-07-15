@@ -408,6 +408,8 @@ function Node:getGlobalPos()
         total_x = total_x + node_x + container_x
         total_y = total_y + node_y + container_y
 
+        total_y = total_y - node.container.scrollOffset
+
         if node:has("parent") then
             node = node.parent
         else
@@ -417,6 +419,8 @@ function Node:getGlobalPos()
 
     total_x = total_x + self.ui.x
     total_y = total_y + self.ui.y
+
+    total_y = total_y
 
     return total_x, total_y,  total_w, total_h
 end

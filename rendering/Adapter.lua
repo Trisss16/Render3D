@@ -58,8 +58,16 @@ function a:extractVertices()
 
         --comprueba que todos los valores son números validos
         if tonumber(values[1]) and tonumber(values[2]) and tonumber(values[3]) then
-            local vertex = Vertex(tonumber(values[1]), tonumber(values[2]), tonumber(values[3]))
-            table.insert(vertices, vertex)
+
+            local vector = Matrix({
+                {tonumber(values[1])},
+                {tonumber(values[2])},
+                {tonumber(values[3])},
+                {1}
+            })
+
+            table.insert(vertices, Vertex(vector))
+
         end
     end
 

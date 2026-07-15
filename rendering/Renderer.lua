@@ -10,6 +10,7 @@ r.canvas = love.graphics.newCanvas(r.canvas_w, r.canvas_h)
 --objeto
 r.vertices = nil
 r.faces = nil
+r.transformedVertices = nil
 
 --datos para las transformaciones y renderizado
 r.showVertices = false
@@ -89,35 +90,37 @@ function r:update(dt)
         return
     end
 
+    --evita que el modelo se acerque demasiado al plano de la camara
     if self.objDistance < self.wide then
         self.objDistance = self.wide
     end
+
+    --matrices para las transformaciones
+    self.transform = {}
+    self.transform.rotationXZ = t:rotateXZ_matrix(self.XZAngle)
+    self.transform.rotationYZ = t:rotateYZ_matrix(self.YZAngle)
+    self.transform.translation = t:translate_matrix(0, 0, self.objDistance)
+
+    --aplica las transformaciones y guarda los vertices dentro de una nueva lista
+    self:applyTransformations()
 end
 
 function r:draw()
+    if self.vertices == nil or self.faces == nil then
+        return
+    end
+
     love.graphics.push("all")
     love.graphics.setCanvas(self.canvas)
+
         love.graphics.clear()
 
-        if self.vertices == nil or self.faces == nil then
-            return
-        end
-
-        if self.showVertices then self:drawVertices() end
         self:drawFaces()
 
+    love.graphics.setCanvas()
     love.graphics.pop()
 
     love.graphics.draw(self.canvas, self.canvas_x, self.canvas_y)
-end
-
-function r:drawVertices()
-    for _, vertex in ipairs(self.vertices) do
-        local transform = self:applyTransformations(vertex)
-
-        local projected = self:project2D(transform)
-        projected:draw()
-    end
 end
 
 function r:drawFaces()
@@ -126,11 +129,8 @@ function r:drawFaces()
         local s = #face
 
         for i = 1, s do
-            local v1 = self.vertices[ face[ i ] ]
-            local v2 = self.vertices[ face[ i % s + 1] ]
-
-            v1 = self:applyTransformations(v1)
-            v2 = self:applyTransformations(v2)
+            local v1 = self.transformedVertices[ face[ i ] ]
+            local v2 = self.transformedVertices[ face[ i % s + 1] ]
 
             local p1 = self:project2D(v1)
             local p2 = self:project2D(v2)
@@ -145,14 +145,13 @@ end
 
 
 --aplica todas las transformaciones a un vertice para poder visualizarlo correctamente
-function r:applyTransformations(vertex)
-    --rotación constante
-    local transform = t:rotate_xz(vertex, self.XZAngle)
+function r:applyTransformations()
+    self.transformedVertices = {}
 
-    --alejar el objeto para que entre en el campo de visión
-    transform = t:translate(transform, 0, 0, self.objDistance)
-
-    return transform
+    for _, v in ipairs(self.vertices) do
+        local vector = self.transform.translation * self.transform.rotationYZ * self.transform.rotationXZ * v.vector
+        table.insert(self.transformedVertices, Vertex(vector))
+    end
 end
 
 

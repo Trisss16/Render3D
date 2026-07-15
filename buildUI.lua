@@ -61,9 +61,11 @@ function buildUI:searchBar()
         field:resetValue()
         adapter:loadModel(path, renderer)
 
-        self.widthLabel:setText(string.format("Ancho: %.1f", renderer.width))
-        self.heightLabel:setText(string.format("Alto: %.1f", renderer.height))
-        self.depthLabel:setText(string.format("Profundo: %.1f", renderer.depth))
+        if renderer.width and renderer.height and renderer.depth then
+            self.widthLabel:setText(string.format("Ancho: %.1f", renderer.width))
+            self.heightLabel:setText(string.format("Alto: %.1f", renderer.height))
+            self.depthLabel:setText(string.format("Profundo: %.1f", renderer.depth))
+        end
     end)
 
 end
