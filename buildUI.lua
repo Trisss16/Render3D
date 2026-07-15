@@ -14,9 +14,9 @@ function buildUI:get()
 
     self:searchBar()
     --self:translateT()
-    -- self:escaleT()
-    self:rotateTrans()
-    -- self:shearTrans()
+    --self:escaleT()
+    --self:rotateTrans()
+    self:shearTrans()
 
     return ui
 end
@@ -195,70 +195,72 @@ function buildUI:shearTrans()
     local shear = LinearLayout(LinearLayout.HORIZONTAL)
     root:addChildren(shear)
 
-        -- Sesgado XY
-        local shearXY = LinearLayout(LinearLayout.VERTICAL)
-        shear:addChildren(shearXY)
-        local XYTitle = Label ("Shear XY", 15)
-        local shxz = TextField(20, "shxz")
+        -- Sesgado en el eje X
+        local shearX = LinearLayout(LinearLayout.VERTICAL)
+        shear:addChildren(shearX)
+        local XTitle = Label ("Sesgado en X", 15)
+        local shyx = TextField(20, "Shy")
+        shyx:setNumeric(true)
+        shyx:setRelativeDimensions(0.15)
+        local shzx = TextField(20, "Shz")
+        shzx:setNumeric(true)
+        shzx:setRelativeDimensions(0.15)
+        local XButton = Button(Color.GREEN, "send")
+        XButton:setRelativeDimensions(0.15)
+        shearX:addChildren(XTitle, shyx, shzx, XButton)
+
+        XButton:addClickListeners(function()
+            local matrixShearX = t:ShearX_matrix(shyx:getValue(), shzx:getValue())
+            shyx:resetValue()
+            shzx:resetValue()
+
+            self:transformObject(matrixShearX)
+        end)
+
+
+        -- Sesgado en eje Y
+        local shearY = LinearLayout(LinearLayout.VERTICAL)
+        shear:addChildren(shearY)
+        local YTitle = Label ("Sesgado en Y", 15)
+        local shxy = TextField(20, "Shx")
+        shxy:setNumeric(true)
+        shxy:setRelativeDimensions(0.15)
+        local shzy = TextField(20, "Shz")
+        shzy:setNumeric(true)
+        shzy:setRelativeDimensions(0.15)
+        local YButton = Button(Color.GREEN, "send")
+        YButton:setRelativeDimensions(0.15)
+        shearY:addChildren(YTitle, shxy, shzy, YButton)
+
+        YButton:addClickListeners(function()
+            local matrixShearY = t:ShearY_matrix(shxy:getValue(), shzy:getValue())
+            shxy:resetValue()
+            shzy:resetValue()
+
+            self:transformObject(matrixShearY)
+        end)
+
+
+        -- Sesgado en eje Z             
+        local shearZ = LinearLayout(LinearLayout.VERTICAL)
+        shear:addChildren(shearZ)
+        local ZTitle = Label ("Sesgado en Z", 15)
+        local shxz = TextField(20, "Shx")
         shxz:setNumeric(true)
         shxz:setRelativeDimensions(0.15)
-        local shyz = TextField(20, "shyz")
+        local shyz = TextField(20, "Shy")
         shyz:setNumeric(true)
         shyz:setRelativeDimensions(0.15)
-        local XYButton = Button(Color.GREEN, "send")
-        XYButton:setRelativeDimensions(0.15)
-        shearXY:addChildren(XYTitle, shxz, shyz, XYButton)
+        local ZButton = Button(Color.GREEN, "send")
+        ZButton:setRelativeDimensions(0.15)
+        shearZ:addChildren(ZTitle, shxz, shyz, ZButton)
 
-        XYButton:addClickListeners(function()
-            local matrixShearXY = t:ShearXY_matrix(shxz:getValue(), shyz:getValue())
+        ZButton:addClickListeners(function()
+            local matrixShearZ = t:ShearZ_matrix(shxz:getValue(), shyz:getValue())
             shxz:resetValue()
             shyz:resetValue()
 
-            self:transformObject(matrixShearXY)
-        end)
-
-        -- Sesgado XZ
-        local shearXZ = LinearLayout(LinearLayout.VERTICAL)
-        shear:addChildren(shearXZ)
-        local XZTitle = Label ("Shear XZ", 15)
-        local shxy = TextField(20, "shxy")
-        shxy:setNumeric(true)
-        shxy:setRelativeDimensions(0.15)
-        local shzy = TextField(20, "shzy")
-        shzy:setNumeric(true)
-        shzy:setRelativeDimensions(0.15)
-        local XZButton = Button(Color.GREEN, "send")
-        XZButton:setRelativeDimensions(0.15)
-        shearXZ:addChildren(XZTitle, shxy, shzy, XZButton)
-
-        XZButton:addClickListeners(function()
-            local matrixShearXZ = t:ShearXZ_matrix(shxy:getValue(), shzy:getValue())
-            shxy:resetValue()
-            shzy:resetValue()
-            
-            self:transformObject(matrixShearXZ)
-        end)
-
-        -- Sesgado YZ
-        local shearYZ = LinearLayout(LinearLayout.VERTICAL)
-        shear:addChildren(shearYZ)
-        local YZTitle = Label ("Shear YZ", 15)
-        local shyx = TextField(20, "shyx")
-        shyx:setNumeric(true)
-        shyx:setRelativeDimensions(0.15)
-        local shzx = TextField(20, "shzx")
-        shzx:setNumeric(true)
-        shzx:setRelativeDimensions(0.15)
-        local YZButton = Button(Color.GREEN, "send")
-        YZButton:setRelativeDimensions(0.15)
-        shearYZ:addChildren(YZTitle, shyx, shzx, YZButton)
-
-        YZButton:addClickListeners(function()
-            local matrixShearYZ = t:ShearYZ_matrix(shyx:getValue(), shzx:getValue())
-            shyx:resetValue()
-            shzx:resetValue()
-            
-            self:transformObject(matrixShearYZ)
+            self:transformObject(matrixShearZ)
         end)
 end
 

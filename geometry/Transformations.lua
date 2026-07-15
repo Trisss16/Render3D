@@ -92,33 +92,34 @@ function t:rotateYZ_matrix(angle)
     })
 end
 
-    -- Matriz de sesgado
-function t:ShearXY_matrix(shxz, shyz)
+--sesgado en el eje x
+function t:ShearX_matrix(shy, shz)
     return Matrix ({
-        {1, 0, shxz, 0},
-        {0, 1, shyz, 0},
-        {0, 0, 1, 0},
-        {0, 0, 0, 1}
+        {  1, 0, 0, 0},
+        {shy, 1, 0, 0},
+        {shz, 0, 1, 0},
+        {  0, 0, 0, 1}
     })
 end
 
-function t:ShearXZ_matrix(shxy, shzy)
+--sesgado en el eje y
+function t:ShearY_matrix(shx, shz)
     return Matrix ({
-        {1, shxy, 0, 0},
-        {0, 1, 0, 0},
-        {0, shzy, 1, 0},
-        {0, 0, 0, 1}
+        {1, shx, 0, 0},
+        {0,   1, 0, 0},
+        {0, shz, 1, 0},
+        {0,   0, 0, 1}
     })
 end
 
-function t:ShearYZ_matrix(shyx, shzx)
+--sesgado en el eje z
+function t:ShearZ_matrix(shx, shy)
     return Matrix ({
-        {1, 0, 0, 0},
-        {shyx, 1, 0, 0},
-        {shzx, 0, 1, 0},
-        {0, 0, 0, 1}
+        {1, 0, shx, 0},
+        {0, 1, shy, 0},
+        {0, 0,    1, 0},
+        {0, 0,    0, 1}
     })
-    
 end
 
 return t
