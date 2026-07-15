@@ -1,11 +1,20 @@
 local r = {}
 
+--canvas
+r.canvas_w = 100
+r.canvas_h = 100
+r.canvas_x = 0
+r.canvas_y = 0
+r.canvas = love.graphics.newCanvas(r.canvas_w, r.canvas_h)
+
+--objeto
 r.vertices = nil
 r.faces = nil
 
 --datos para las transformaciones y renderizado
 r.showVertices = false
-r.angle = 0
+r.XZAngle = 0
+r.YZAngle = 0
 r.objDistance = 1
 
 --asignar vertices y caras
@@ -13,6 +22,23 @@ function r:setObj(vertices, faces)
     self.vertices = vertices
     self.faces = faces
 
+    self:getRenderingData()
+end
+
+function r:setPosAndDimensions(w, h, x, y)
+    self.canvas_w = w
+    self.canvas_h = h
+    self.canvas_x = x
+    self.canvas_y = y
+    self.canvas = love.graphics.newCanvas(r.canvas_w, r.canvas_h)
+    self.canvas:setFilter("nearest", "nearest")
+
+    Point2D.SCREEN_WIDTH = w
+    Point2D.SCREEN_HEIGHT = h
+    Point2D:getAspectRatio()
+end
+
+function r:getRenderingData()
     local low_w, high_w = 0, 0
     local low_h, high_h = 0, 0
     local low_d, high_d = 0, 0
@@ -44,10 +70,6 @@ function r:setObj(vertices, faces)
     self.height = high_h - low_h
     self.depth = high_d - low_d
 
-    self:getVelocities()
-end
-
-function r:getVelocities()
     if self.depth > self.width then
         self.wide = self.depth
     else
@@ -67,35 +89,33 @@ function r:update(dt)
         return
     end
 
-    --[[CONTROLES PARA DEBUG]]
-
-    if love.mouse.isDown(1) then
-        self.angle = (self.angle - self.spinVelocity * dt) % (2 * math.pi)
-    elseif love.mouse.isDown(2) then
-        self.angle = (self.angle + self.spinVelocity * dt) % (2 * math.pi)
-    end
-
-    if love.keyboard.isDown("up") then
-        self.objDistance = self.objDistance + self.zoomVelocity * dt
-    elseif love.keyboard.isDown("down") then
-        self.objDistance = self.objDistance - self.zoomVelocity * dt
+    if self.objDistance < self.wide then
+        self.objDistance = self.wide
     end
 end
 
 function r:draw()
-    if self.vertices == nil or self.faces == nil then
-        return
-    end
+    love.graphics.push("all")
+    love.graphics.setCanvas(self.canvas)
+        love.graphics.clear()
 
-    if self.showVertices then self:drawVertices() end
-    self:drawFaces()
+        if self.vertices == nil or self.faces == nil then
+            return
+        end
+
+        if self.showVertices then self:drawVertices() end
+        self:drawFaces()
+
+    love.graphics.pop()
+
+    love.graphics.draw(self.canvas, self.canvas_x, self.canvas_y)
 end
 
 function r:drawVertices()
     for _, vertex in ipairs(self.vertices) do
         local transform = self:applyTransformations(vertex)
 
-        local projected = t:project2D(transform)
+        local projected = self:project2D(transform)
         projected:draw()
     end
 end
@@ -112,8 +132,8 @@ function r:drawFaces()
             v1 = self:applyTransformations(v1)
             v2 = self:applyTransformations(v2)
 
-            local p1 = t:project2D(v1)
-            local p2 = t:project2D(v2)
+            local p1 = self:project2D(v1)
+            local p2 = self:project2D(v2)
 
             love.graphics.line(p1.screen_x, p1.screen_y, p2.screen_x, p2.screen_y)
         end
@@ -127,12 +147,17 @@ end
 --aplica todas las transformaciones a un vertice para poder visualizarlo correctamente
 function r:applyTransformations(vertex)
     --rotación constante
-    local transform = t:rotate_xz(vertex, self.angle)
+    local transform = t:rotate_xz(vertex, self.XZAngle)
 
     --alejar el objeto para que entre en el campo de visión
     transform = t:translate(transform, 0, 0, self.objDistance)
 
     return transform
+end
+
+
+function r:project2D(vertex)
+    return Point2D(vertex.x / vertex.z, vertex.y / vertex.z)
 end
 
 return r

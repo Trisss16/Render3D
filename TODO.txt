@@ -2,9 +2,9 @@
 
 función para transformar los vertices en buildUI
 
-calcular el ancho, alto y profundidad del modelo y mostrarlo en la ui 
+* calcular el ancho, alto y profundidad del modelo y mostrarlo en la ui 
 
-calcular velocidad de zoom en renderer
+* calcular velocidad de zoom en renderer
 
 modulo para recibir inputs que interactue con renderer
 

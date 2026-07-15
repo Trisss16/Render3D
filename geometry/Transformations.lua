@@ -32,10 +32,6 @@ function t:translate(vertex, tx, ty, tz)
     return Vertex(vertex.x + tx, vertex.y + ty, vertex.z + tz)
 end
 
-function t:project2D(vertex)
-    return Point2D(vertex.x / vertex.z, vertex.y / vertex.z)
-end
-
 -- Con matrices
 
     -- Matriz de traslacion 

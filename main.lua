@@ -16,29 +16,19 @@ _G.Button = require "ui.components.Button"
 _G.TextField = require "ui.components.TextField"
 _G.Label = require "ui.components.Label"
 
-local NodeDebug = Node:extend()
-function NodeDebug:draw()
-    Node.draw(self)
-    love.graphics.setColor(1,1,1,1)
-    love.graphics.rectangle("fill", 0, 0, self.w, self.h, 20)
-end
-
-_G.SCREEN_WIDTH = nil
-_G.SCREEN_HEIGHT = nil
-_G.ASPECT_RATIO = nil
-
-SCREEN_WIDTH, SCREEN_HEIGHT = love.window.getMode()
-ASPECT_RATIO = SCREEN_WIDTH / SCREEN_HEIGHT
 
 local buildUI = require "buildUI"
-local a = require "rendering.Adapter"
-local r = require "rendering.Renderer"
+local adapter = require "rendering.Adapter"
+local renderer = require "rendering.Renderer"
+local renderInput = require "rendering.RenderInput"
 
 
 local ui
 
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
+
+    renderer:setPosAndDimensions(800, 800, 0, 0)
 
     local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
@@ -61,14 +51,15 @@ function love.load()
         {4, 8},
     }
 
-    r:setObj(vertices, faces)
+    renderer:setObj(vertices, faces)
 
     ui = buildUI:get()
 end
 
 function love.update(dt)
     ui:update(dt)
-    r:update(dt)
+    renderInput:update(dt)
+    renderer:update(dt)
 
     --[[print("altura del layout: " .. ui.root.h)
     print("altura del contenedor: " .. ui.rootContainer.h)
@@ -79,7 +70,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    r:draw()
+    renderer:draw()
     ui:draw()
 end
 
@@ -89,130 +80,4 @@ end
 
 function love.keypressed(key)
     ui:keypressed(key)
-end
-
-function _G.createUI()
-    local root = LinearLayout(LinearLayout.VERTICAL)
-
-    ui = UI(root, 400, 700, 750, 50)
-    ui:showBorders(true)
-    ui:setBgColor(Color.PURPLE)
-
-    local n1 = Node()
-    n1:setDebugActive(true)
-    n1:setRelativeDimensions(0.2, 0.2)
-
-    local n2 = NodeDebug()
-    --n2:setDebugActive(true)
-    n2:setRelativeDimensions(0.2, 0.1)
-
-    local n3 = LinearLayout(LinearLayout.HORIZONTAL)
-    --n3:setDebugActive(true)
-    n3:setRelativeDimensions(0.2, 0.1)
-
-    root:addChildren(n1, n2, n3)
-
-    local n4 = NodeDebug()
-    --n4:setDebugActive(true)
-    --n4:setRelativeDimensions(0.2, 0.2)
-    n4:setRelativeDimensions(0.2)
-
-    local n5 = NodeDebug()
-    --n5:setDebugActive(true)
-    n5:setRelativeDimensions(0.2, 0.2)
-
-    local n6 = LinearLayout(LinearLayout.VERTICAL)
-    n6:setDebugActive(true)
-
-    n3:addChildren(n4, n5, n6)
-
-    local n7 = Node()
-    n7:setDebugActive(true)
-    n7:setRelativeDimensions(0.1, 0.05)
-
-    local n8 = Node()
-    n8:setDebugActive(true)
-    n8:setRelativeDimensions(0.1, 0.05)
-
-    n6:addChildren(n7, n8)
-end
-
-function _G.createUI2()
-    --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/")
-    --local font = love.graphics.newFont("ui/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 20)
-    --local font = love.graphics.newFont("ui/fonts/Anton/Anton-Regular.ttf", 20)
-    --local font = love.graphics.newFont("ui/fonts/Lilita_One/LilitaOne-Regular.ttf", 20)
-
-
-    local root = LinearLayout(LinearLayout.VERTICAL)
-    root:setConstraints({0.4, 0.2, 0.1, 0.3})
-
-
-    ui = UI(root, 400, 700, 750, 50)
-    ui:showBorders(true)
-    --ui:setFocusedHints(false)
-    ui:setBgColor(Color.GRAY)
-    ui:setRounding(0.075)
-
-    --local title = Label("hola hola hola hola hola hola hola hola", 40)
-    local title = Label("Texto")
-    root:addChildren(title)
-
-
-    --local btn1 = Button(Color.PURPLE, "hola", font)
-    local btn1 = Button(Color.PURPLE, "hola")
-    btn1:setRelativeDimensions(0.3, 0.07)
-    root:addChildren(btn1)
-
-
-    btn1:addClickListeners(
-        function ()
-            --local btn = Button(Color.PURPLE, "", 10)
-            --local btn = Button(Color.PURPLE, "")
-            local btn = Button(Color.PURPLE)
-            local random = 0.2 + math.random() * 0.3
-            --print(random)
-            --btn:setRelativeDimensions(random, 0.07)
-            btn:setRelativeDimensions(random)
-            root:addChildren(btn)
-        end
-    )
-
-
-    local field = TextField()
-    --local field = TextField(20)
-    --local field = TextField(font)
-    --field:setNumeric(true)
-    field:setRelativeDimensions(0.7, 0.7)
-    root:addChildren(field)
-end
-
-
-function _G.createUI3()
-    local linear = LinearLayout(LinearLayout.VERTICAL)
-    linear:setConstraints({0.4, 0.4, 0.2})
-
-    ui = UI(linear, 500, 500, 100, 100)
-    ui:setBgColor(Color.GREEN)
-    ui:setRounding(0.05)
-    ui:showBorders(true)
-
-    local btn1 = Button(Color.GRAY, "text", 40)
-    btn1:setRelativeDimensions(0.4)
-    linear:addChildren(btn1)
-
-    local l2 = LinearLayout(LinearLayout.HORIZONTAL)
-    linear:addChildren(l2)
-    local btn2, btn3 = Button(), Button()
-    l2:addChildren(btn2, btn3)
-
-
-    local field = TextField(20)
-    field:setNumeric(true)
-    field:setRelativeDimensions(0.5)
-    linear:addChildren(field)
-
-    btn1:addClickListeners(function ()
-        print(field:getValue())
-    end)
 end
