@@ -40,8 +40,6 @@ local ui
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest", 1)
 
-    --createUI38()
-
     local vertices = {
         Vertex( -0.25,  0.25,  0.25 ), --1
         Vertex(  0.25,  0.25,  0.25 ), --2
@@ -63,32 +61,7 @@ function love.load()
         {4, 8},
     }
 
-    --r:setObj(vertices, faces)
-
-    --a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat.obj", r)
-    a:loadModel("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycow\\cow.obj", r)
-
-    local translate = Matrix({
-        {1, 0, 0, 2},
-        {0, 1, 0, 2},
-        {0, 0, 1, 2},
-        {0, 0, 0, 1}
-    })
-
-    local vector = Matrix({
-        {2},
-        {4},
-        {6},
-        {1}
-    })
-
-    local translated = translate * vector
-
-    translate:print()
-    print()
-    vector:print()
-    print()
-    translated:print()
+    r:setObj(vertices, faces)
 
     ui = buildUI:get()
 end
@@ -96,6 +69,13 @@ end
 function love.update(dt)
     ui:update(dt)
     r:update(dt)
+
+    --[[print("altura del layout: " .. ui.root.h)
+    print("altura del contenedor: " .. ui.rootContainer.h)
+    print("\ncanvas del layout: " .. ui.root.canvas:getHeight())
+    print("canvas del contenedor: " .. ui.rootContainer.canvas:getHeight())
+    print("\ntotal_h: " .. ui.rootContainer.total_h)
+    print("\n")]]
 end
 
 function love.draw()

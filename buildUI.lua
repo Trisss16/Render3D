@@ -7,10 +7,12 @@ local root
 
 function buildUI:get()
     root = LinearLayout()
-    root:setConstraints({0.2, 0.4})
+    root:setConstraints({0.2, 0.4, 0.4, 0.05, 0.4, 0.05, 0.4})
 
     local ui = UI(root, 350, 600, 800, 80)
-    ui:showBorders(true)
+    ui:setRounding(0.05)
+    --ui:showBorders(true)
+    root:setAllowScroll(true)
 
     self:searchBar()
     self:translateT()
@@ -58,7 +60,7 @@ function buildUI:translateT()
     local titleT = Label("Traslación", 30)
     translateTrans:addChildren(titleT)
 
-    local constraints = {0.7, 0.3}
+    local constraints = {0.6, 0.4}
 
     local tx = LinearLayout(LinearLayout.HORIZONTAL)
     tx:setConstraints(constraints)
@@ -115,7 +117,7 @@ function buildUI:escaleT()
     local titleE = Label("Escalamiento", 30)
     escaleTrans:addChildren(titleE)
 
-    local constraints = {0.7, 0.3}
+    local constraints = {0.6, 0.4}
 
     local sx = LinearLayout(LinearLayout.HORIZONTAL)
     sx:setConstraints(constraints)
@@ -168,6 +170,9 @@ end
 
 -- Transformación para rotar
 function buildUI:rotateTrans()
+    local title = Label("Rotación", 30)
+    root:addChildren(title)
+
     local rotate = LinearLayout(LinearLayout.HORIZONTAL)
     root:addChildren(rotate)
 
@@ -232,6 +237,9 @@ end
 
 -- Transformación para sesgar
 function buildUI:shearTrans()
+    local title = Label("Sesgado", 30)
+    root:addChildren(title)
+
     local shear = LinearLayout(LinearLayout.HORIZONTAL)
     root:addChildren(shear)
 

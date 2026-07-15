@@ -123,4 +123,20 @@ function LinearLayout:defineWithConstraints(cw, ch, w, h)
     end
 end
 
+
+
+--sobreescribir para el scroll
+
+function LinearLayout:calculateTotalDimensions()
+    local total_w, total_h = 0, 0
+
+    for i, container in ipairs(self.children) do
+        local w, h = container:getRealDimensions() --dimensiones sin considerar margenes
+        total_w = total_w + w
+        total_h = total_h + h
+    end
+
+    self:setContainerTotalDimensions(total_w, total_h)
+end
+
 return LinearLayout
