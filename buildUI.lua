@@ -5,9 +5,13 @@ local adapter = require "rendering.Adapter"
 local t = require "geometry.Transformations"
 local root
 
+buildUI.widthLabel = Label("Ancho: 0", 20)
+buildUI.heightLabel = Label("Alto: 0", 20)
+buildUI.depthLabel = Label("Profundidad: 0", 20)
+
 function buildUI:get()
     root = LinearLayout()
-    root:setConstraints({0.2, 0.4, 0.4, 0.05, 0.4, 0.05, 0.4})
+    root:setConstraints({0.2, 0.2, 0.4, 0.4, 0.05, 0.4, 0.05, 0.4})
 
     local ui = UI(root, 350, 600, 800, 80)
     ui:setRounding(0.05)
@@ -15,12 +19,20 @@ function buildUI:get()
     root:setAllowScroll(true)
 
     self:searchBar()
+    self:modelLabels()
     self:translateT()
     self:escaleT()
     self:rotateTrans()
     self:shearTrans()
 
     return ui
+end
+
+function buildUI:modelLabels()
+    local modelLayout = LinearLayout(LinearLayout.VERTICAL)
+    root:addChildren(modelLayout)
+
+    modelLayout:addChildren(self.widthLabel, self.heightLabel, self.depthLabel)
 end
 
 -- Barra de busqueda
@@ -48,6 +60,10 @@ function buildUI:searchBar()
         local path = field:getValue()
         field:resetValue()
         adapter:loadModel(path, renderer)
+
+        self.widthLabel:setText(string.format("Ancho: %.1f", renderer.width))
+        self.heightLabel:setText(string.format("Alto: %.1f", renderer.height))
+        self.depthLabel:setText(string.format("Profundo: %.1f", renderer.depth))
     end)
 
 end

@@ -1,4 +1,4 @@
-permitir scroll en layouts
+*  scroll epermitirn layouts
 
 función para transformar los vertices en buildUI
 
@@ -9,3 +9,5 @@ calcular velocidad de zoom en renderer
 modulo para recibir inputs que interactue con renderer
 
 renderizar caras con shading simple
+
+guardar archivo modificado

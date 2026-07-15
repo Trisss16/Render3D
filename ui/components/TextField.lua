@@ -113,7 +113,7 @@ function TextField:updateText(dt)
     local inputText = self.ui.inputText
 
     if self.numeric then
-        if tonumber(self.text .. inputText) then
+        if tonumber(self.text .. inputText) or inputText == "-" then
             self.text = self.text .. inputText
         end
     else

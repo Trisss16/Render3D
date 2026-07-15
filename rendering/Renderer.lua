@@ -6,17 +6,58 @@ r.faces = nil
 --datos para las transformaciones y renderizado
 r.showVertices = false
 r.angle = 0
-r.objDistance = 1500
+r.objDistance = 1
 
 --asignar vertices y caras
 function r:setObj(vertices, faces)
     self.vertices = vertices
     self.faces = faces
 
+    local low_w, high_w = 0, 0
+    local low_h, high_h = 0, 0
+    local low_d, high_d = 0, 0
+
     for i, vertex in ipairs(self.vertices) do
+        if vertex.x < low_w then
+            low_w = vertex.x
+        elseif vertex.x > high_w then
+            high_w = vertex.x
+        end
+
+        if vertex.y < low_h then
+            low_h = vertex.y
+        elseif vertex.y > high_h then
+            high_h = vertex.y
+        end
+
+        if vertex.z < low_d then
+            low_d = vertex.z
+        elseif vertex.z > high_d then
+            high_d = vertex.z
+        end
+
         print("vertice " .. i)
         print("x: " .. vertex.x .. "\ny: " .. vertex.y .. "\nz: " .. vertex.z .. "\n")
     end
+
+    self.width = high_w - low_w
+    self.height = high_h - low_h
+    self.depth = high_d - low_d
+
+    self:getVelocities()
+end
+
+function r:getVelocities()
+    if self.depth > self.width then
+        self.wide = self.depth
+    else
+        self.wide = self.width
+    end
+
+    self.zoomVelocity = self.wide * 1.5
+    self.objDistance = self.wide * 3
+
+    self.spinVelocity = math.pi / 2
 end
 
 
@@ -28,19 +69,16 @@ function r:update(dt)
 
     --[[CONTROLES PARA DEBUG]]
 
-    local spinVelocity = math.pi / 2
-    local translateVelocity = 100
-
     if love.mouse.isDown(1) then
-        self.angle = (self.angle - spinVelocity * dt) % (2 * math.pi)
+        self.angle = (self.angle - self.spinVelocity * dt) % (2 * math.pi)
     elseif love.mouse.isDown(2) then
-        self.angle = (self.angle + spinVelocity * dt) % (2 * math.pi)
+        self.angle = (self.angle + self.spinVelocity * dt) % (2 * math.pi)
     end
 
     if love.keyboard.isDown("up") then
-        self.objDistance = self.objDistance + translateVelocity * dt
+        self.objDistance = self.objDistance + self.zoomVelocity * dt
     elseif love.keyboard.isDown("down") then
-        self.objDistance = self.objDistance - translateVelocity * dt
+        self.objDistance = self.objDistance - self.zoomVelocity * dt
     end
 end
 

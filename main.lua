@@ -30,9 +30,9 @@ _G.ASPECT_RATIO = nil
 SCREEN_WIDTH, SCREEN_HEIGHT = love.window.getMode()
 ASPECT_RATIO = SCREEN_WIDTH / SCREEN_HEIGHT
 
+local buildUI = require "buildUI"
 local a = require "rendering.Adapter"
 local r = require "rendering.Renderer"
-local buildUI = require "buildUI"
 
 
 local ui
