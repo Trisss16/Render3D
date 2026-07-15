@@ -7,15 +7,15 @@ local root
 
 function buildUI:get()
     root = LinearLayout()
-    root:setConstraints({0.2, 0.5})
+    root:setConstraints({0.2, 0.4})
 
     local ui = UI(root, 350, 600, 800, 80)
     ui:showBorders(true)
 
     self:searchBar()
-    --self:translateT()
-    --self:escaleT()
-    --self:rotateTrans()
+    self:translateT()
+    self:escaleT()
+    self:rotateTrans()
     self:shearTrans()
 
     return ui
@@ -34,7 +34,7 @@ function buildUI:searchBar()
     bar:setConstraints({0.7, 0.3})
     container:addChildren(bar)
 
-    local field = TextField(20, "ruta de archivo")
+    local field = TextField(20, "ruta del archivo")
     field:setRelativeDimensions(0.6)
     local btn = Button(Color.GREEN, "buscar")
     btn:setRelativeDimensions(0.2)
@@ -50,6 +50,7 @@ function buildUI:searchBar()
 
 end
 
+
 -- Tarnsformacion para trasladar 
 function buildUI:translateT()
     local translateTrans = LinearLayout(LinearLayout.VERTICAL)
@@ -63,7 +64,8 @@ function buildUI:translateT()
     tx:setConstraints(constraints)
     translateTrans:addChildren(tx)
     local txTitle = Label("Traslación en X:",20)
-    local txField = TextField(20)
+    local txField = TextField(20, "tx")
+    txField:setNumeric(true)
     txField:setRelativeDimensions(0.15)
     tx:addChildren(txTitle,txField)
 
@@ -71,7 +73,8 @@ function buildUI:translateT()
     ty:setConstraints(constraints)
     translateTrans:addChildren(ty)
     local tyTitle = Label("Traslación en Y:",20)
-    local tyField = TextField(20)
+    local tyField = TextField(20, "ty")
+    tyField:setNumeric(true)
     tyField:setRelativeDimensions(0.15)
     ty:addChildren(tyTitle,tyField)
 
@@ -79,12 +82,29 @@ function buildUI:translateT()
     tz:setConstraints(constraints)
     translateTrans:addChildren(tz)
     local tzTitle = Label("Traslación en Z:",20)
-    local tzField = TextField(20)
+    local tzField = TextField(20, "tz")
+    tzField:setNumeric(true)
     tzField:setRelativeDimensions(0.15)
     tz:addChildren(tzTitle,tzField)
 
-    local TranslateButton = Button(Color.GREEN)
+    local TranslateButton = Button(Color.GREEN, "aplicar")
+    TranslateButton:setRelativeDimensions(0.2)
     translateTrans:addChildren(TranslateButton)
+
+    TranslateButton:addClickListeners(function ()
+        local valX = txField:getValue()
+        local valY = tyField:getValue()
+        local valZ = tzField:getValue()
+
+        local matrixTranslate = t:translate_matrix(valX, valY, valZ)
+
+        txField:resetValue()
+        tyField:resetValue()
+        tzField:resetValue()
+
+        self:transformObject(matrixTranslate)
+
+    end)
 
 end
 
@@ -101,7 +121,8 @@ function buildUI:escaleT()
     sx:setConstraints(constraints)
     escaleTrans:addChildren(sx)
     local sxTitle = Label("Escalamiento en X:")
-    local sxField = TextField(20)
+    local sxField = TextField(20, "sx")
+    sxField:setNumeric(true)
     sxField:setRelativeDimensions(0.15)
     sx:addChildren(sxTitle,sxField)
 
@@ -109,7 +130,8 @@ function buildUI:escaleT()
     sy:setConstraints(constraints)
     escaleTrans:addChildren(sy)
     local syTitle = Label("Escalamiento en Y:")
-    local syField = TextField(20)
+    local syField = TextField(20, "sy")
+    syField:setNumeric(true)
     syField:setRelativeDimensions(0.15)
     sy:addChildren(syTitle,syField)
 
@@ -117,14 +139,32 @@ function buildUI:escaleT()
     sz:setConstraints(constraints)
     escaleTrans:addChildren(sz)
     local szTitle = Label("Escalamiento en Z:")
-    local szField = TextField(20)
+    local szField = TextField(20, "sz")
+    szField:setNumeric(true)
     szField:setRelativeDimensions(0.15)
     sz:addChildren(szTitle,szField)
 
-    local EscaleButton = Button(Color.GREEN)
+    local EscaleButton = Button(Color.GREEN, "aplicar")
+    EscaleButton:setRelativeDimensions(0.2)
     escaleTrans:addChildren(EscaleButton)
-    
+
+    EscaleButton:addClickListeners(function ()
+        local valX = sxField:getValue()
+        local valY = syField:getValue()
+        local valZ = szField:getValue()
+
+        local matrixEscale = t:escale_matrix(valX, valY, valZ)
+
+        sxField:resetValue()
+        syField:resetValue()
+        szField:resetValue()
+
+        self:transformObject(matrixEscale)
+
+    end)
+
 end
+
 
 -- Transformación para rotar
 function buildUI:rotateTrans()
@@ -138,8 +178,8 @@ function buildUI:rotateTrans()
         local XYField = TextField(20, "angle")
         XYField:setNumeric(true)
         XYField:setRelativeDimensions(0.18)
-        local XYButton = Button(Color.GREEN, "send")
-        XYButton:setRelativeDimensions(0.15)
+        local XYButton = Button(Color.GREEN, "aplicar")
+        XYButton:setRelativeDimensions(0.2)
         rotateXY:addChildren(XYTitle, XYField, XYButton)
 
         XYButton:addClickListeners(function()
@@ -158,8 +198,8 @@ function buildUI:rotateTrans()
         local XZField = TextField(20, "angle")
         XZField:setNumeric(true)
         XZField:setRelativeDimensions(0.18)
-        local XZButton = Button(Color.GREEN, "send")
-        XZButton:setRelativeDimensions(0.15)
+        local XZButton = Button(Color.GREEN, "aplicar")
+        XZButton:setRelativeDimensions(0.2)
         rotateXZ:addChildren(XZTitle, XZField, XZButton)
 
         XZButton:addClickListeners(function()
@@ -177,8 +217,8 @@ function buildUI:rotateTrans()
         local YZField = TextField(20, "angle")
         YZField:setNumeric(true)
         YZField:setRelativeDimensions(0.18)
-        local YZButton = Button(Color.GREEN, "send")
-        YZButton:setRelativeDimensions(0.15)
+        local YZButton = Button(Color.GREEN, "aplicar")
+        YZButton:setRelativeDimensions(0.2)
         rotateYZ:addChildren(YZTitle, YZField, YZButton)
 
         YZButton:addClickListeners(function()
@@ -205,8 +245,8 @@ function buildUI:shearTrans()
         local shzx = TextField(20, "Shz")
         shzx:setNumeric(true)
         shzx:setRelativeDimensions(0.15)
-        local XButton = Button(Color.GREEN, "send")
-        XButton:setRelativeDimensions(0.15)
+        local XButton = Button(Color.GREEN, "aplicar")
+        XButton:setRelativeDimensions(0.2)
         shearX:addChildren(XTitle, shyx, shzx, XButton)
 
         XButton:addClickListeners(function()
@@ -228,8 +268,8 @@ function buildUI:shearTrans()
         local shzy = TextField(20, "Shz")
         shzy:setNumeric(true)
         shzy:setRelativeDimensions(0.15)
-        local YButton = Button(Color.GREEN, "send")
-        YButton:setRelativeDimensions(0.15)
+        local YButton = Button(Color.GREEN, "aplicar")
+        YButton:setRelativeDimensions(0.2)
         shearY:addChildren(YTitle, shxy, shzy, YButton)
 
         YButton:addClickListeners(function()
@@ -251,8 +291,8 @@ function buildUI:shearTrans()
         local shyz = TextField(20, "Shy")
         shyz:setNumeric(true)
         shyz:setRelativeDimensions(0.15)
-        local ZButton = Button(Color.GREEN, "send")
-        ZButton:setRelativeDimensions(0.15)
+        local ZButton = Button(Color.GREEN, "aplicar")
+        ZButton:setRelativeDimensions(0.2)
         shearZ:addChildren(ZTitle, shxz, shyz, ZButton)
 
         ZButton:addClickListeners(function()

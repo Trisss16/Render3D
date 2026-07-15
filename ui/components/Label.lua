@@ -41,6 +41,9 @@ function Label:updateNode(dt)
 
     self.text_x = self.w / 2 - self.text_w / 2
     self.text_y = self.h / 2 - self.text_h / 2
+
+    self.text_x = math.floor(self.text_x)
+    self.text_y = math.floor(self.text_y)
 end
 
 function Label:updateDimensions()
