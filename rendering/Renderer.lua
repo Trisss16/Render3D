@@ -40,6 +40,13 @@ function r:setObj(vertices, faces)
 
     self:getRenderingData()
     self:resetInputs()
+
+    --crea las tablas para los vertices transformados y los poligonos una sola vez
+    self.transformedVertices = {}
+    for i, _ in ipairs(self.vertices) do
+        local v = Matrix({{0}, {0}, {0}, {0}})
+        self.transformedVertices[i] = Vertex(v)
+    end
 end
 
 function r:setPosAndDimensions(w, h, x, y)
@@ -156,57 +163,13 @@ function r:drawFaces()
     end
 end
 
-function r:drawFaces2()
-    for _, polygon in ipairs(self.polygons) do
-
-        if polygon.behind then
-            goto continue
-        end
-
-        local normal = polygon.normal
-        local toCamera = polygon.vertices[1].vector - self.camera
-
-        local dp = Vectors:dotProduct(normal, toCamera)
-
-        if dp < 0 then
-            local s = #polygon.vertices
-
-            polygon.table = {}
-
-            for i = 1, s do
-                --[[local v1 = polygon.vertices[ i ]
-                local v2 = polygon.vertices[ i % s + 1 ]
-
-                local p1 = self:project2D(v1)
-                local p2 = self:project2D(v2)
-
-                love.graphics.line(p1.screen_x, p1.screen_y, p2.screen_x, p2.screen_y)]]
-
-                local v1 = polygon.vertices[ i ]
-                local p1 = self:project2D(v1)
-
-                table.insert(polygon.table, p1.screen_x)
-                table.insert(polygon.table, p1.screen_y)
-            end
-
-            love.graphics.setColor(-dp, -dp, -dp)
-            love.graphics.polygon("fill", polygon.table)
-            --love.graphics.setColor(1,1,1)
-        end
-
-        ::continue::
-    end
-end
-
 
 
 --aplica todas las transformaciones a un vertice para poder visualizarlo correctamente
 function r:applyTransformations()
-    self.transformedVertices = {}
-
     for i, v in ipairs(self.vertices) do
         local vector = self.transform * v.vector
-        self.transformedVertices[i] = Vertex(vector)
+        self.transformedVertices[i]:setVector(vector)
     end
 end
 
@@ -237,12 +200,13 @@ function r:getPolygonsDotProduct()
             goto continue
         end
 
+        --[[al calcular el producto punto entre la normal de un polígono y el vector desde la camara hacia el vertice (toCamera), se puede saber 
+        que tan grande es la apertura entre estos dos, lo que sirve para asignarle un sombreado, además de un decidir cual lado del polígono se
+        dibuja, dependiendo de la posición de la camara.]]
         local normal = polygon.normal
         local toCamera = Vectors:unitVector(polygon.vertices[1].vector - self.camera)
 
         polygon.dp = Vectors:dotProduct(normal, toCamera)
-
-        --print(polygon.dp)
 
         if polygon.dp > 0 then
             goto continue

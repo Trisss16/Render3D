@@ -156,6 +156,12 @@ function TextField:resetValue()
     self:getTextPosAndDimensions()
 end
 
+function TextField:setValue(text)
+    self.text = text
+    self.textObj = love.graphics.newText(self.font, self.text)
+    self:getTextPosAndDimensions()
+end
+
 
 
 function TextField:unfocus()

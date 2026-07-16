@@ -8,6 +8,8 @@ function a:loadModel(path, renderer)
 
     self.path = utf8.replace(path, {["\\"] = "/", ["\""] = ""}) --pasa el path al formato que lua usa
 
+    self.renderer = renderer
+
     print(self.path)
 
     local foundFile = self:getContent()
@@ -94,6 +96,63 @@ function a:extractFaces()
     end
 
     return faces
+end
+
+function a:saveChanges()
+    local file = io.open(self.path, "r")
+    if file == nil then
+        print("No se encontro el archivo")
+        return false
+    end
+
+    local content = {}
+
+    for line in file:lines() do
+        table.insert(content, line)
+    end
+
+    file:close()
+
+    --escribir los nuevos vertices
+
+    local transformed = self:getTransformedVertices()
+    local ctr = 1
+
+    for i, str in ipairs(content) do
+        if utf8.split(str, " ")[1] == "v" then
+            content[i] = transformed[ctr]
+            ctr = ctr + 1
+        end
+    end
+
+    --vuelve a abrir el archivo en modo escritura
+
+    file = io.open(self.path, "w")
+    if file == nil then
+        print("No se encontro el archivo")
+        return false
+    end
+
+    for _, str in ipairs(content) do
+        file:write(str .. "\n")
+    end
+
+    file:close()
+
+    self:loadModel(self.path, self.renderer)
+end
+
+--[[guarda los nuevos valores de cada vertice en strings. Al transformar un modelo solo
+se afectan sus vertices, por lo que solo es necesario actualizar esa parte en el archivo]]
+function a:getTransformedVertices()
+    local transformed = {}
+
+    for _, vertex in ipairs(self.renderer.vertices) do
+        local str = string.format("v %f %f %f", vertex.x, vertex.y, vertex.z)
+        table.insert(transformed, str)
+    end
+
+    return transformed
 end
 
 return a

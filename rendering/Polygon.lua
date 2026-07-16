@@ -1,10 +1,10 @@
 local Point2D = require "rendering.Point2D"
 
-local p = Class:create()
+local Polygon = Class:create()
 
-p.near = 0.1 --donde se hace el corte
+Polygon.near = 0.1 --donde se hace el corte
 
-function p:new(vertices, camera)
+function Polygon:new(vertices, camera)
     self.vertices = vertices
 
     self.behind = true
@@ -22,7 +22,7 @@ function p:new(vertices, camera)
     self:getNormal()
 end
 
-function p:getNormal()
+function Polygon:getNormal()
     --local a = self.vertices[2].vector - self.vertices[1].vector
     --local b = self.vertices[3].vector - self.vertices[1].vector
 
@@ -34,4 +34,4 @@ function p:getNormal()
 end
 
 
-return p
+return Polygon

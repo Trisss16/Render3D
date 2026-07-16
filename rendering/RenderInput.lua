@@ -15,9 +15,9 @@ function i:update(dt)
 end
 
 function i:rotationXZ(dt)
-    if love.keyboard.isDown("left") then
+    if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
         return renderer.spinVelocity * dt
-    elseif love.keyboard.isDown("right") then
+    elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") then
         return -renderer.spinVelocity * dt
     else
         return 0
@@ -25,9 +25,9 @@ function i:rotationXZ(dt)
 end
 
 function i:rotationYZ(dt)
-    if love.keyboard.isDown("up") then
+    if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
         return renderer.spinVelocity * dt
-    elseif love.keyboard.isDown("down") then
+    elseif love.keyboard.isDown("down") or love.keyboard.isDown("s") then
         return -renderer.spinVelocity * dt
     else
         return 0

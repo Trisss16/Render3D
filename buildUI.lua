@@ -11,7 +11,7 @@ buildUI.depthLabel = Label("Profundidad: 0", 20)
 
 function buildUI:get()
     root = LinearLayout()
-    root:setConstraints({0.2, 0.2, 0.4, 0.4, 0.07, 0.4, 0.07, 0.4})
+    root:setConstraints({0.2, 0.2, 0.4, 0.4, 0.07, 0.4, 0.07, 0.4, 0.2})
 
     local ui = UI(root, 350, 600, 800, 80)
     ui:setRounding(0.05)
@@ -24,6 +24,7 @@ function buildUI:get()
     self:escaleT()
     self:rotateTrans()
     self:shearTrans()
+    self:updateModel()
 
     return ui
 end
@@ -65,6 +66,8 @@ function buildUI:searchBar()
     container:addChildren(bar)
 
     local field = TextField(20, "ruta del archivo")
+    --field:setValue("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\characterlowpoly2.obj")
+    field:setValue("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat2.obj")
     field:setRelativeDimensions(0.6)
     local btn = Button(Color.GREEN, "buscar")
     btn:setRelativeDimensions(0.2)
@@ -359,6 +362,22 @@ function buildUI:transformObject(matrix)
     self:displayModelDimensions()
 end
 
+function buildUI:updateModel()
+    local updateLayout = LinearLayout(LinearLayout.HORIZONTAL)
+    updateLayout:setConstraints({0.6, 0.4})
+    root:addChildren(updateLayout)
+
+    local infoLabel = Label("Guarda el modelo\nmodificado:", 25)
+    local saveBtn = Button(Color.GREEN, "guardar")
+    saveBtn:setRelativeDimensions(0.2)
+
+    saveBtn:addClickListeners(function ()
+        adapter:saveChanges()
+    end)
+
+    updateLayout:addChildren(infoLabel, saveBtn)
+end
+
 
 
 function buildUI:displayModelDimensions()
@@ -368,4 +387,5 @@ function buildUI:displayModelDimensions()
         self.depthLabel:setText(string.format("Profundo: %.1f", renderer.depth))
     end
 end
+
 return buildUI
