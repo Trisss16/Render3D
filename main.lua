@@ -1,9 +1,9 @@
 _G.love = require "love"
 _G.Class = require "libs.Class"
-_G.Point2D = require "rendering.Point2D"
-_G.Vertex = require "rendering.Vertex"
 _G.t = require "geometry.Transformations"
 _G.Matrix = require "geometry.Matrix"
+_G.Vertex = require "rendering.Vertex"
+_G.Vectors = require "geometry.Vectors"
 _G.utf8 = require "libs.utf8_simple"
 
 
@@ -37,18 +37,14 @@ function love.update(dt)
     ui:update(dt)
     renderInput:update(dt)
     renderer:update(dt)
-
-    --[[print("altura del layout: " .. ui.root.h)
-    print("altura del contenedor: " .. ui.rootContainer.h)
-    print("\ncanvas del layout: " .. ui.root.canvas:getHeight())
-    print("canvas del contenedor: " .. ui.rootContainer.canvas:getHeight())
-    print("\ntotal_h: " .. ui.rootContainer.total_h)
-    print("\n")]]
 end
 
 function love.draw()
     renderer:draw()
     ui:draw()
+
+    local fps = love.timer.getFPS()
+    love.graphics.print("FPS: " .. fps, 10, 10)
 end
 
 function love.textinput(t)

@@ -11,7 +11,7 @@ buildUI.depthLabel = Label("Profundidad: 0", 20)
 
 function buildUI:get()
     root = LinearLayout()
-    root:setConstraints({0.2, 0.2, 0.4, 0.4, 0.05, 0.4, 0.05, 0.4})
+    root:setConstraints({0.2, 0.2, 0.4, 0.4, 0.07, 0.4, 0.07, 0.4})
 
     local ui = UI(root, 350, 600, 800, 80)
     ui:setRounding(0.05)
@@ -41,7 +41,7 @@ function buildUI:modelLabels()
     local resetLayout = LinearLayout(LinearLayout.VERTICAL)
     layout:addChildren(resetLayout)
 
-    local resetLabel = Label("Reiniciar\nmodelo", 25)
+    local resetLabel = Label("Reiniciar\nposición", 25)
     local resetBtn = Button(Color.GREEN, "Reiniciar")
     resetBtn:setRelativeDimensions(0.25)
     resetLayout:addChildren(resetLabel, resetBtn)

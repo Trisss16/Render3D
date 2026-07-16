@@ -70,6 +70,27 @@ function Matrix.__add(a, b)
     return Matrix(new)
 end
 
+function Matrix.__sub(a, b)
+    if type(a) ~= "table" or type(b) ~= "table" then
+        error("Resta de matrices invalida.", 1)
+    end
+
+    if a.rows ~= b.rows or a.columns ~= b.columns then
+        error("Suma de matrices invalida, las matrices no pueden tener diferentes dimensiones.", 1)
+    end
+
+    local new = {}
+
+    for i = 1, a.rows do
+        new[i] = {}
+        for j = 1, a.columns do
+            new[i][j] = a:get(i,j) - b:get(i,j)
+        end
+    end
+
+    return Matrix(new)
+end
+
 function Matrix.__mul(a, b)
 
     if type(a) == "number" then
