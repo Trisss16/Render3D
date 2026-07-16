@@ -67,7 +67,7 @@ function buildUI:searchBar()
 
     local field = TextField(20, "ruta del archivo")
     --field:setValue("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\characterlowpoly2.obj")
-    field:setValue("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat2.obj")
+    --field:setValue("C:\\Users\\trili\\OneDrive\\Documentos\\modelos 3D\\lowpolycat\\cat2.obj")
     field:setRelativeDimensions(0.6)
     local btn = Button(Color.GREEN, "buscar")
     btn:setRelativeDimensions(0.2)
@@ -346,22 +346,6 @@ function buildUI:shearTrans()
         end)
 end
 
-function buildUI:transformObject(matrix)
-    local vertices = renderer.vertices
-
-    --[[print("Transformando objeto con la matriz: ")
-    matrix:print()
-    print()]]
-
-    for i, vertex in ipairs(vertices) do
-        local vector = matrix * vertex.vector
-        vertices[i] = Vertex(vector)
-    end
-
-    renderer:getRenderingData()
-    self:displayModelDimensions()
-end
-
 function buildUI:updateModel()
     local updateLayout = LinearLayout(LinearLayout.HORIZONTAL)
     updateLayout:setConstraints({0.6, 0.4})
@@ -379,6 +363,26 @@ function buildUI:updateModel()
 end
 
 
+
+function buildUI:transformObject(matrix)
+    local vertices = renderer.vertices
+
+    if not vertices then
+        return
+    end
+
+    --[[print("Transformando objeto con la matriz: ")
+    matrix:print()
+    print()]]
+
+    for i, vertex in ipairs(vertices) do
+        local vector = matrix * vertex.vector
+        vertices[i] = Vertex(vector)
+    end
+
+    renderer:getRenderingData()
+    self:displayModelDimensions()
+end
 
 function buildUI:displayModelDimensions()
     if renderer.width and renderer.height and renderer.depth then

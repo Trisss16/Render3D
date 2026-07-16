@@ -44,7 +44,7 @@ function love.draw()
     ui:draw()
 
     local fps = love.timer.getFPS()
-    love.graphics.print("FPS: " .. fps, 10, 10)
+    --love.graphics.print("FPS: " .. fps, 10, 10)
 end
 
 function love.textinput(t)

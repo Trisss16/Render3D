@@ -99,6 +99,11 @@ function a:extractFaces()
 end
 
 function a:saveChanges()
+    if not self.renderer then
+        print("no se ha cargado un modelo.")
+        return
+    end
+
     local file = io.open(self.path, "r")
     if file == nil then
         print("No se encontro el archivo")

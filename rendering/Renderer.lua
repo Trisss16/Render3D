@@ -105,6 +105,9 @@ function r:getRenderingData()
 end
 
 function r:resetInputs()
+    if not self.wide then
+        return
+    end
     self.objDistance = self.wide * 2
     self.XZAngle = 0
     self.YZAngle = 0
